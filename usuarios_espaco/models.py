@@ -24,7 +24,7 @@ class Assinatura(models.Model):
     valor = models.IntegerField(blank=True)
     periodo = models.CharField(max_length=30)
     permissoes = models.ForeignKey(Permissoes, models.SET_NULL,blank=True,null=True)
-    observacoes = models.CharField(max_length=200, blank=True)
+    observacao = models.CharField(max_length=200, blank=True)
     
     def __str__(self):
     	return u'%s - %s' % (self.nome, self.periodo)

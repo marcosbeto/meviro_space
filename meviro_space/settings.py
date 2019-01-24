@@ -90,13 +90,24 @@ DATABASES = {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     # }, 
+    
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'meviro_space',
+    #     # 'NAME': os.path.join(BASE_DIR, 'mydb'),
+    #     'USER': 'space_admin',
+    #     'PASSWORD': 'orivem420',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '5432', # 8000 is default
+    # }
+
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'meviro_space',
+        'NAME': 'd7pmkgtjs6dk5i',
         # 'NAME': os.path.join(BASE_DIR, 'mydb'),
-        'USER': 'space_admin',
-        'PASSWORD': 'orivem420',
-        'HOST': '127.0.0.1',
+        'USER': 'imstfgiyggwjep',
+        'PASSWORD': '810fbd289c96174ff0b70ebc0103544809b782ada3c9fa2e17e6f8049fcfaa70',
+        'HOST': 'ec2-54-227-246-152.compute-1.amazonaws.com',
         'PORT': '5432', # 8000 is default
     }
 }
