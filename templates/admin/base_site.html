@@ -1,0 +1,174 @@
+{% extends "admin/base_site.html" %}
+{% load staticfiles %}
+{% block extrastyle %}
+<link href="https://fonts.googleapis.com/css?family=Baloo+Thambi|Francois+One" rel="stylesheet">
+<style>
+  :root {
+    --primary-color: #1d1d1b;
+    --primary-color-faded: #585853;
+    --secondary-color: #4dffba;
+  }
+
+  ::selection {
+    background: var(--secondary-color);
+    color:var(--primary-color);
+    opacity:1
+  }
+
+  ::-moz-selection {
+    background: var(--secondary-color);
+    color:var(--primary-color);
+    opacity:1
+  }
+
+  /*html {
+    background-image: url('/static/imagens/admin/background_admin_9.jpg');
+        background-position: left;
+  }*/
+
+
+  body {
+    font-family:
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif,
+          'Apple Color Emoji',
+          'Segoe UI Emoji',
+          'Segoe UI Symbol';
+
+      /*background-image: url('/static/imagens/admin/background_admin_9.jpg');*/
+    /*background-color: #fff;*/
+        /*background-position: left;*/
+        /*height:100%;*/
+    background:
+    radial-gradient(black 15%, transparent 16%) 0 0,
+    radial-gradient(black 15%, transparent 16%) 8px 8px,
+    radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+    radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+    background-color:#282828;
+    background-size:16px 16px;
+  }
+
+  .module h2, .module caption, .inline-group h2 {
+    background-color: #7926ab;
+    border-radius: 5px 5px 0px 0px;
+  }
+
+  .module {
+    border-radius: 5px;
+    padding-bottom: 10px;
+  }
+
+  #changelist .paginator {
+    border-radius: 5px;
+  }
+
+  #changelist #toolbar {
+    border-radius: 5px;
+  }
+
+  #header {
+    background: #ffcd00;
+    color:#000000;
+  }
+  #header a:link, #header a:visited{
+    color:#313131;
+  }
+
+  .login #header h1 a {
+    color: #313131;
+  }
+
+  .login #header {
+    background-color:#ffcd00; 
+  }
+
+  #content .errornote {
+    color:red;
+  }
+
+  #content p{
+    color:#fff;
+  }
+
+
+
+  /*#content th td{
+    color:#313131;
+  }*/
+
+
+  #content p a:link, #content p a:visited{
+    color:#fff;
+  }
+
+  #site-name {
+    color:#313131;
+  }
+
+  h1 {
+    font-family: 'Baloo Thambi', cursive;
+    color:#fff;
+  }
+
+  #branding h1, #branding h1 a:link, #branding h1 a:visited {
+    color: #313131;
+    font-family: 'Francois One', 'Baloo Thambi', cursive;
+  }
+
+  td, th {
+    font-size: 14px;
+    line-height: 18px;
+    font-weight: 400;
+  }
+
+  .object-tools a:link, .object-tools a:visited {
+    background: #7926ab;
+  }
+
+  div.breadcrumbs {
+    background: #00000052;
+  }
+
+  #changelist .actions {
+    border-radius: 5px;
+  }
+
+  #changelist {
+    border-radius: 5px;
+  }
+
+  a:link, a:visited {
+    color: var(--primary-color-faded);
+  }
+  .selector-chosen h2 {
+    background: var(--primary-color-faded) !important;
+  }
+  .button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: var(--primary-color-faded);
+  }
+  .button.default, input[type=submit].default, .submit-row input.default {
+    background: #7926ab;
+  }
+  .button:active, input[type=submit]:active, input[type=button]:active, .button:focus, input[type=submit]:focus, input[type=button]:focus, .button:hover, input[type=submit]:hover, input[type=button]:hover {
+    background: var(--primary-color-faded);
+    opacity: 0.8;
+  }
+  .button.default:active, input[type=submit].default:active, .button.default:focus, input[type=submit].default:focus, .button.default:hover, input[type=submit].default:hover {
+    background: var(--primary-color);
+    opacity: 0.8;
+  }
+</style>
+{% endblock %}
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <img src="{% static 'imagens/admin/logo_meviro_space_admin_pequena.png' %}" height="28px" style="margin-top:-5px;" />
+    </a>
+</h1>
+{% endblock %}
+{% block nav-global %}{% endblock %}
