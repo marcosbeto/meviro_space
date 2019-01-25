@@ -29,7 +29,7 @@ class LogUsoFerramentaUsuario(models.Model):
 	hora_ativacao = models.TimeField(blank=True, null=True,)
 	data_desativacao = models.DateField(blank=True, null=True,)
 	hora_desativacao = models.TimeField(blank=True, null=True,)
-	tempo_uso = models.TimeField(blank=True)
+	tempo_uso = models.TimeField(blank=True, null=True,)
 
 	def __str__(self):
 		return u'%s usou %s por %s' % (self.id_usuario.primeiro_nome, self.id_ferramenta.nome, self.tempo_uso)

@@ -139,9 +139,9 @@ urlpatterns = [
     path('log_acesso/<int:pk>/update/', log_acesso_update, name='log-acesso-update'),
 
     path('log_uso/', log_uso_list, name='log-uso-list'),
-    path('log_uso/detail/<int:pk>/', log_uso_detail, name='log-uso-detail'),
+    # path('log_uso/detail/<int:pk>/', log_uso_detail, name='log-uso-detail'),
     path('log_uso/add/', log_uso_add, name='log-uso-add'),
-    path('log_uso/update/<int:pk>/update/', log_uso_update, name='log-uso-update')
+    # path('log_uso/update/<int:pk>/update/', log_uso_update, name='log-uso-update')
     
   # END: API PATHS
 
