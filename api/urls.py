@@ -1,13 +1,14 @@
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from usuarios_espaco.views import PermissoesViewSet, AssinaturaViewSet, IntervalosHorariosViewSet, DiasSemanaViewSet, TipoFuncionarioViewSet, UsuarioEspacoViewSet
-from ferramentas.views import FerramentaViewSet
+from usuarios_meviro.views import UsuarioEspacoViewSet
+from administrativo.views import AssinaturaViewSet, IntervalosHorariosViewSet, DiasSemanaViewSet, FornecedorViewSet
+from infra.views import FerramentaViewSet
 from logs.views import LogAcessoEspacoUsuarioViewSet, LogUsoFerramentaUsuarioViewSet
 from api.views import api_login
 
 router = routers.DefaultRouter()
-router.register(r'usuarios_espaco', UsuarioEspacoViewSet)
+router.register(r'usuarios_meviro', UsuarioEspacoViewSet)
 router.register(r'log_acesso', LogAcessoEspacoUsuarioViewSet)
 router.register(r'log_uso', LogUsoFerramentaUsuarioViewSet)
 # router.register(r'api/assinatura', AssinaturaViewSet)
@@ -22,22 +23,6 @@ usuario_espaco_add = UsuarioEspacoViewSet.as_view({
 	'post': 'create'
 })
 usuario_espaco_update = UsuarioEspacoViewSet.as_view({
-	'post':'update'
-})
-###
-permissoes_list = PermissoesViewSet.as_view({
-    'get': 'list',
-})
-
-permissoes_detail = PermissoesViewSet.as_view({
-    'get': 'retrieve'
-})
-
-permissoes_add = PermissoesViewSet.as_view({
-	'post': 'create'
-})
-
-permissoes_update = PermissoesViewSet.as_view({
 	'post':'update'
 })
 ####
@@ -123,11 +108,6 @@ urlpatterns = [
     path('assinatura/add/', assinatura_add, name='assinatura-add'),
     path('assinatura/<int:pk>/update/', assinatura_update, name='assinatura-update'),
 
-    path('permissoes/', permissoes_list, name='permissoes-list'),
-    path('permissoes/<int:pk>/', permissoes_detail, name='permissoes-detail'),
-    path('permissoes/add/', permissoes_add, name='permissoes-add'),
-    path('permissoes/<int:pk>/update/', permissoes_update, name='permissoes-update'),
-
     path('ferramenta/', ferramenta_list, name='ferramenta-list'),
     path('ferramenta/<int:pk>/', ferramenta_detail, name='ferramenta-detail'),
     path('ferramenta/add/', ferramenta_add, name='ferramenta-add'),
@@ -142,6 +122,7 @@ urlpatterns = [
     # path('log_uso/detail/<int:pk>/', log_uso_detail, name='log-uso-detail'),
     path('log_uso/add/', log_uso_add, name='log-uso-add'),
     # path('log_uso/update/<int:pk>/update/', log_uso_update, name='log-uso-update')
+    # path('/acesso_recursos/<int:id_usuario>/<int:id_ferramenta>', )
     
   # END: API PATHS
 

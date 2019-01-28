@@ -4,8 +4,8 @@ from django.db import models
 # from django.apps import apps
 # UsuarioEspaco = apps.get_model('usuarios_espaco', 'UsuarioEspaco')
 
-from usuarios_espaco.models import UsuarioEspaco
-from ferramentas.models import Ferramenta
+from usuarios_meviro.models import UsuarioEspaco
+from infra.models import Ferramenta
 
 class LogAcessoEspacoUsuario(models.Model):
 	id_usuario = models.ForeignKey(UsuarioEspaco, blank=True, null=True, on_delete=models.DO_NOTHING)

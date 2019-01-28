@@ -1,7 +1,5 @@
 from .models import LogAcessoEspacoUsuario, LogUsoFerramentaUsuario
 from rest_framework import serializers
-from usuarios_espaco.serializers import UsuarioEspacoSerializer
-
 
 class LogAcessoEspacoUsuarioSerializer(serializers.ModelSerializer):
     class Meta:

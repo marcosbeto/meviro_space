@@ -1,0 +1,1 @@
+default_app_config = 'usuarios_meviro.apps.UsuariosMeviroConfig'
