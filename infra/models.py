@@ -4,7 +4,7 @@ from django.conf import settings
 from meviro_space import constants
 from financeiro.models import NotaFiscal
 from usuarios_meviro.models import UsuarioEspaco
-from administrativo.models import Fornecedor
+from administrativo.models import Assinatura, Fornecedor
 
 # from localflavor.br.forms import BRCPFField, BRStateChoiceField, BRStateSelect, BRZipCodeField
 
@@ -14,11 +14,22 @@ class Secao(models.Model):
 	localizacao = models.CharField(max_length=50)
 
 	def __str__(self):
-		return u'%s' % (self.nome)
+		return u'%s (id:%s)' % (self.nome, self.id)
 	
 	class Meta:
 		verbose_name = "Seção"
 		verbose_name_plural = "Seções"
+
+class SecaoAssinatura(models.Model):
+	id_assinatura = models.ForeignKey(Assinatura, models.SET_NULL, blank=True, null=True)
+	id_secao = models.ForeignKey(Secao, models.SET_NULL, blank=True, null=True)
+
+	def __str__(self):
+		return u'%s(id:%s) <> %s(id:%s)' % (self.id_assinatura.nome, self.id_assinatura.id, self.id_secao.nome, self.id_secao.id)
+
+	class Meta:
+		verbose_name_plural = "Assinaturas <> Seções"
+		verbose_name = "Assinatura <> Seção"
 
 
 class Armarios(models.Model):
@@ -101,7 +112,7 @@ class Arduino(models.Model):
 	codigo =  models.CharField(max_length=30, blank=True)
 
 	def __str__(self):
-		return u'%s' % (self.nome)
+		return u'%s (id:%s)' % (self.nome, self.id)
 	
 	class Meta:
 		verbose_name = "Arduino"
@@ -109,15 +120,15 @@ class Arduino(models.Model):
 
 
 class ArduinoAuth(models.Model):
-	id_arduino = models.ForeignKey(UsuarioEspaco, blank=True, null=True, on_delete=models.DO_NOTHING)
+	id_arduino = models.ForeignKey(Arduino, blank=True, null=True, on_delete=models.DO_NOTHING)
 	id_secao = models.ForeignKey(Secao, blank=True, null=True, on_delete=models.DO_NOTHING)
 	
 	def __str__(self):
-		return u'%s [%s]' % (self.id_arduino, self.id_secao.nome)
+		return u'%s(id:%s) <> %s(id:%s)' % (self.id_arduino.nome, self.id_arduino.id, self.id_secao.nome, self.id_secao.id)
 	
 	class Meta:
-		verbose_name = "Arduino Auth"
-		verbose_name_plural = "Arduinos Auth"
+		verbose_name = "Arduino <> Seção"
+		verbose_name_plural = "Arduinos <> Seções"
 
 
 

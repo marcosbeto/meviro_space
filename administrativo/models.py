@@ -1,5 +1,7 @@
 from django.db import models
 from meviro_space import constants
+# from infra.models import Secao
+
 
 # Create your models here.
 
@@ -12,11 +14,22 @@ class Assinatura(models.Model):
     observacao = models.CharField(max_length=200, blank=True)
     
     def __str__(self):
-    	return u'%s - %s' % (self.nome, self.periodo)
+    	return u'%s (id:%s) - %s' % (self.nome, self.id, self.periodo)
 
     class Meta:
     	verbose_name_plural = "Tipos de Assinatura"
+    	verbose_name = "Tipo de Assinatura"
 
+# class AssinaturaSecao(models.Model):
+# 	id_assinatura = models.ForeignKey(Assinatura, models.SET_NULL, blank=True, null=True, on_delete=models.DO_NOTHING)
+# 	id_secao = models.ForeignKey(Secao, models.SET_NULL, blank=True, null=True, on_delete=models.DO_NOTHING)
+
+# 	def __str__(self):
+# 		return u'%s - %s' % (self.id_assinatura.nome, self.id_secao.nome)
+
+# 	class Meta:
+# 		verbose_name_plural = "Relação - Assinaturas e Seções"
+# 		verbose_name = "Relação - Assinatura e Seção"
 
 class IntervalosHorarios(models.Model):
 	intervalo = models.CharField(max_length=15)

@@ -1,6 +1,7 @@
 from django.shortcuts import render
 
 #BEGIN: imports related to api authentication
+from django.http import JsonResponse
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
@@ -12,6 +13,7 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 from rest_framework.response import Response
+from infra.models import ArduinoAuth, SecaoAssinatura
 #END: imports related to api authentication
 
 @csrf_exempt
@@ -32,3 +34,17 @@ def api_login(request): #this method will return the token, if valid
     return Response({'token': token.key},
                     status=HTTP_200_OK)
 
+def authorize_arduino(request, id_arduino, id_assinatura):
+    try:
+        arduino_secao = ArduinoAuth.objects.get(id_arduino=id_arduino)
+    except:
+        return JsonResponse({'auth': False});
+    
+    id_secao = arduino_secao.id_secao.id
+    
+    secao_assinaturas = SecaoAssinatura.objects.filter(id_assinatura=id_assinatura, id_secao=id_secao)
+    
+    if (not secao_assinaturas):
+        return JsonResponse({'auth': False});
+    
+    return JsonResponse({'auth': True});
