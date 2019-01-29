@@ -43,7 +43,7 @@ def authorize_arduino(request, id_arduino, id_usuario):
     
     id_secao = arduino_secao.id_secao.id
 
-    usuario = UsuarioEspaco.objects.get(id=id_usuario).values_list('id', 'tipo_assinatura_id')
+    usuario = UsuarioEspaco.objects.get(id=id_usuario)
     
     secao_assinaturas = SecaoAssinatura.objects.filter(id_assinatura=usuario.tipo_assinatura_id, id_secao=id_secao)
 

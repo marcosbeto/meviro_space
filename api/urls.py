@@ -122,7 +122,7 @@ urlpatterns = [
     # path('log_uso/detail/<int:pk>/', log_uso_detail, name='log-uso-detail'),
     path('log_uso/add/', log_uso_add, name='log-uso-add'),
     # path('log_uso/update/<int:pk>/update/', log_uso_update, name='log-uso-update')
-    path('p/<int:id_arduino>/<int:id_assinatura>', authorize_arduino)
+    path('p/<int:id_arduino>/<int:id_usuario>', authorize_arduino)
     
   # END: API PATHS
 
