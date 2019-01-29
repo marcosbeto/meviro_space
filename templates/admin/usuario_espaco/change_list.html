@@ -2,6 +2,13 @@
 {% block object-tools-items %}
     <!-- {{ block.super }} -->
     <li>
-        <a class="addLink" href="{% url 'admin:usuarios_meviro_usuarioespaco_add' %}">Adicionar Novo Usuário</a>
+        <a class="addLink" href="{% url 'admin:usuarios_meviro_usuarioespaco_add' %}">Adicionar Novo Usuáriso</a>
     </li>
+{% endblock %}
+{% block object-tools %}
+    <div>
+        LENMGAS
+    </div>
+    <br />
+    {{ block.super }}
 {% endblock %}

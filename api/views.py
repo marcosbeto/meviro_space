@@ -14,6 +14,7 @@ from rest_framework.status import (
 )
 from rest_framework.response import Response
 from infra.models import ArduinoAuth, SecaoAssinatura
+from usuarios_meviro.models import UsuarioEspaco
 #END: imports related to api authentication
 
 @csrf_exempt
@@ -34,15 +35,18 @@ def api_login(request): #this method will return the token, if valid
     return Response({'token': token.key},
                     status=HTTP_200_OK)
 
-def authorize_arduino(request, id_arduino, id_assinatura):
+def authorize_arduino(request, id_arduino, id_usuario):
     try:
         arduino_secao = ArduinoAuth.objects.get(id_arduino=id_arduino)
     except:
         return JsonResponse({'auth': False});
     
     id_secao = arduino_secao.id_secao.id
+
+    usuario = UsuarioEspaco.objects.get(id=id_usuario).values_list('id', 'tipo_assinatura_id')
     
-    secao_assinaturas = SecaoAssinatura.objects.filter(id_assinatura=id_assinatura, id_secao=id_secao)
+    secao_assinaturas = SecaoAssinatura.objects.filter(id_assinatura=usuario.tipo_assinatura_id, id_secao=id_secao)
+
     
     if (not secao_assinaturas):
         return JsonResponse({'auth': False});
