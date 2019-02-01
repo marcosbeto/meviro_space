@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.conf import settings
+from django.utils.safestring import mark_safe
 from meviro_space import constants
 from administrativo.models import Assinatura, DiasSemana, IntervalosHorarios
 
@@ -18,16 +19,18 @@ class UsuarioEspaco(models.Model):
 	cpf = models.CharField(max_length=30)
 	rg = models.CharField(max_length=30)
 	foto = models.ImageField(upload_to='fotos_usuarios_espaco', blank=True)
-	# avatar = models.ForeignKey(Avatar, models.SET_NULL, blank=True, null=True) #when the reference is deleted the item will not be deleted
 	apelido = models.CharField(max_length=30, blank=True)
-	# dias_provaveis = models.ForeignKey(DiasSemana, models.SET_NULL,blank=True,null=True) #when the reference is deleted the item will not be deleted
-	# horarios_provaveis = models.ForeignKey(IntervalosHorarios, models.SET_NULL,blank=True,null=True)
-	# tipo_funcionario = models.ForeignKey(TipoFuncionario, models.SET_NULL,blank=True,null=True)
 	tipo_assinatura = models.ForeignKey(Assinatura, models.SET_NULL,blank=True,null=True)
 	nome_contato_emergencia = models.CharField(max_length=50, blank=True)
 	telefone_contato_emergencia = models.CharField(max_length=30, blank=True)
 	tem_plano_saude = models.BooleanField(default=False)
 	nome_plano_saude = models.CharField(max_length=50, blank=True)
+
+	def restart_button(self):
+		return mark_safe("<a href='record_rfid/" + str(self.id) + "/' style='background-color: #ffcd00;padding: 4px 8px;color: #333333;border-radius: 2px;font-weight: bold;font-size: 10pt;'>Enviar comando</a>")
+    
+	restart_button.allow_tags = True
+	restart_button.short_description = "Gravar Cartão"
 
 	def __str__(self):
 		return u'%s %s' % (self.primeiro_nome, self.sobrenome)
@@ -35,6 +38,9 @@ class UsuarioEspaco(models.Model):
 	class Meta:
 		verbose_name_plural = "Usuários do Espaço"
 		verbose_name = "Usuário do Espaço"
+		 
+		
+                
 
 
 class UsuarioDiasSemana(models.Model):

@@ -6,6 +6,7 @@ from django.db import models
 
 from usuarios_meviro.models import UsuarioEspaco
 from infra.models import Ferramenta
+from infra.models import Arduino
 
 class LogAcessoEspacoUsuario(models.Model):
 	id_usuario = models.ForeignKey(UsuarioEspaco, blank=True, null=True, on_delete=models.DO_NOTHING)
@@ -23,7 +24,7 @@ class LogAcessoEspacoUsuario(models.Model):
 
 
 class LogUsoFerramentaUsuario(models.Model):
-	id_ferramenta = models.ForeignKey(Ferramenta, blank=True, null=True, on_delete=models.DO_NOTHING)
+	id_arduino = models.ForeignKey(Arduino, blank=True, null=True, on_delete=models.DO_NOTHING)
 	id_usuario = models.ForeignKey(UsuarioEspaco, blank=True, null=True, on_delete=models.DO_NOTHING)
 	data_ativacao = models.DateField(blank=True, null=True,)
 	hora_ativacao = models.TimeField(blank=True, null=True,)
@@ -32,7 +33,7 @@ class LogUsoFerramentaUsuario(models.Model):
 	tempo_uso = models.TimeField(blank=True, null=True,)
 
 	def __str__(self):
-		return u'%s usou %s por %s' % (self.id_usuario.primeiro_nome, self.id_ferramenta.nome, self.tempo_uso)
+		return u'%s usou %s por %s' % (self.id_usuario.primeiro_nome, self.id_arduino.nome, self.tempo_uso)
 	
 	class Meta:
 		verbose_name = "Registro de Log de Uso"

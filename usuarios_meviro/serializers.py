@@ -19,13 +19,9 @@ class UsuarioEspacoSerializer(serializers.HyperlinkedModelSerializer):
 					'rg',
 					'foto',
 					'apelido',
-					'dias_provaveis',
-					'horarios_provaveis',
-					# 'tipo_funcionario',
 					'tipo_assinatura',
 					'nome_contato_emergencia',
 					'telefone_contato_emergencia',
 					'tem_plano_saude',
 					'nome_plano_saude'
 				)
-

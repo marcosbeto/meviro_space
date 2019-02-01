@@ -15,6 +15,7 @@ from rest_framework.status import (
 from rest_framework.response import Response
 from infra.models import ArduinoAuth, SecaoAssinatura
 from usuarios_meviro.models import UsuarioEspaco
+from logs.models import LogUsoFerramentaUsuario
 #END: imports related to api authentication
 
 @csrf_exempt
@@ -47,8 +48,12 @@ def authorize_arduino(request, id_arduino, id_usuario):
     
     secao_assinaturas = SecaoAssinatura.objects.filter(id_assinatura=usuario.tipo_assinatura_id, id_secao=id_secao)
 
-    
+
     if (not secao_assinaturas):
         return JsonResponse({'auth': False});
     
+    arduino = Arduino.objects.get(id_arduino=id_arduino)
+    log_uso_ferramenta = LogUsoFerramentaUsuario(id_usuario=usuario, id_arduino=arduino)
+    log_uso_ferramenta.save()
+
     return JsonResponse({'auth': True});
