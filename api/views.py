@@ -52,7 +52,7 @@ def authorize_arduino(request, id_arduino, id_usuario):
     if (not secao_assinaturas):
         return JsonResponse({'auth': False});
     
-    arduino = Arduino.objects.get(id_arduino=id_arduino)
+    arduino = Arduino.objects.get(id=id_arduino)
     log_uso_ferramenta = LogUsoFerramentaUsuario(id_usuario=usuario, id_arduino=arduino)
     log_uso_ferramenta.save()
 
