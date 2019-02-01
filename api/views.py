@@ -13,7 +13,7 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 from rest_framework.response import Response
-from infra.models import ArduinoAuth, SecaoAssinatura
+from infra.models import Arduino, ArduinoAuth, SecaoAssinatura
 from usuarios_meviro.models import UsuarioEspaco
 from logs.models import LogUsoFerramentaUsuario
 #END: imports related to api authentication
