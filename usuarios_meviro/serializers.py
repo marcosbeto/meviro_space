@@ -1,4 +1,4 @@
-from .models import UsuarioEspaco
+from .models import UsuarioEspaco, UsuarioDiasSemana, UsuarioIntervalosHorarios
 from rest_framework import serializers
 
 class UsuarioEspacoSerializer(serializers.HyperlinkedModelSerializer):
@@ -24,4 +24,21 @@ class UsuarioEspacoSerializer(serializers.HyperlinkedModelSerializer):
 					'telefone_contato_emergencia',
 					'tem_plano_saude',
 					'nome_plano_saude'
+				)
+
+class UsuarioDiasSemanaSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = UsuarioDiasSemana
+		fields = (
+					'id_usuario',
+					'id_dias_provaveis'
+				)
+
+
+class UsuarioIntervalosHorariosSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = UsuarioIntervalosHorarios
+		fields = (
+					'id_usuario',
+					'id_intervalos_horarios'
 				)

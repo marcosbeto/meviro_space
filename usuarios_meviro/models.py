@@ -40,9 +40,6 @@ class UsuarioEspaco(models.Model):
 		verbose_name = "Usuário do Espaço"
 		 
 		
-                
-
-
 class UsuarioDiasSemana(models.Model):
 	id_usuario = models.ForeignKey(UsuarioEspaco, on_delete=models.DO_NOTHING)
 	id_dias_provaveis = models.ForeignKey(DiasSemana, on_delete=models.DO_NOTHING)

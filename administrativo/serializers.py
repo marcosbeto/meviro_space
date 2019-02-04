@@ -10,8 +10,7 @@ class AssinaturaSerializer(serializers.HyperlinkedModelSerializer):
 					'ultima_atualizacao',
 					'valor',
 					'periodo',
-					'permissoes',
-					'observacoes'
+					'observacao'
 				)
 
 class IntervalosHorariosSerializer(serializers.HyperlinkedModelSerializer):

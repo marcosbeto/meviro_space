@@ -19,7 +19,7 @@ class LogUsoFerramentaUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = LogUsoFerramentaUsuario
         fields = (
-        			'id_ferramenta',
+        			'id_arduino',
 					'id_usuario',
 					'data_ativacao',
 					'hora_ativacao',

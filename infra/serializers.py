@@ -1,4 +1,4 @@
-from .models import Secao, Armarios, FuncaoFerramenta, Ferramenta
+from .models import Secao, SecaoAssinatura, Armarios, FuncaoFerramenta, Ferramenta
 from rest_framework import serializers
 
 
@@ -9,6 +9,14 @@ class SecaoSerializer(serializers.HyperlinkedModelSerializer):
         			'nome',
 					'descricao',
 					'localizacao'
+				)
+
+class SecaoAssinaturaSerializer(serializers.HyperlinkedModelSerializer):
+	class Meta:
+		model = SecaoAssinatura
+		fields = (
+					'id_assinatura',
+					'id_secao'
 				)
 
 class ArmariosSerializer(serializers.HyperlinkedModelSerializer):
@@ -41,8 +49,9 @@ class FerramentaSerializer(serializers.HyperlinkedModelSerializer):
 					'nota_fiscal',
 					'fornecedor',
 					'foto',
+					'ferramenta_eletrica',
 					'voltagem',
 					'amperagem',
 					'potencia',
-					'numero_controle'
+					'secao'
 				)
