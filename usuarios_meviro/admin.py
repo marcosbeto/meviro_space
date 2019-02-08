@@ -46,11 +46,11 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		        'id_usuario': id_usuario
 		    }
 
-			if request.method == 'POST':
+			if request.method != 'POST':
 				return TemplateResponse(request, "admin/usuario_espaco/confirm_rfid_record.html", context)
 			else:
 
-				r = requests.get('http://192.168.20.3', headers={'id_usuario': str(id_usuario)})
+				r = requests.get('http://192.168.20.7', headers={'id_usuario': str(id_usuario)})
 				
 				messages.success(request, 'O comando foi enviado para gravadora de cartão. ID_Usuario: ' + str(id_usuario))
 
