@@ -26,7 +26,7 @@ SECRET_KEY = 's81hilqeqxmx+7wsu%c(h#+%u11le)r9htuh*wp@5nta-e3-w5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['mevirospace.herokuapp.com']
 
 
 # Application definition
