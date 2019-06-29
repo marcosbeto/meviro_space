@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-import django_heroku
+# import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -32,6 +32,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # 'bootstrap_admin',
+    # 'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,9 +48,11 @@ INSTALLED_APPS = [
         #MY APPS
     'usuarios_meviro',
     'infra',
+    # 'infra.apps.InfraAdminConfig',
+    'educacao',
     'administrativo',
-    'financeiro',
     'logs',
+    'venda',
     'api'    
 ]
 
@@ -76,6 +80,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries':{
+                'sort_apps': 'templatetags.sort_apps',
+            }
         },
     },
 ]
@@ -172,4 +179,17 @@ REST_FRAMEWORK = {
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
+
+BOOTSTRAP_ADMIN_SIDEBAR_MENU = False
+
+APP_ORDER = [
+        'usuarios_meviro',
+        'venda',
+        'administrativo',
+        'infra',
+        'educacao',
+        'logs',
+        'api',
+    ]
+    

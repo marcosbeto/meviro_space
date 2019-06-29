@@ -10,15 +10,18 @@ from django.template.response import TemplateResponse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 
-from .models import UsuarioEspaco
+from .models import UsuarioEspaco, Agendamento
 
 
 class UsuarioEspacoAdmin(admin.ModelAdmin):
 	change_list_template = "admin/usuario_espaco/change_list.html"
 
-	list_display = ('primeiro_nome', 'sobrenome', 'email', 'tipo_assinatura', 'restart_button')
+	list_display = ('primeiro_nome', 'sobrenome', 'email', 'restart_button')
 	actions = ['record_rfid']
+	search_fields = ['primeiro_nome', 'sobrenome', 'email']
 	# list_filter = ('tipo_assinatura','tipo_funcionario')
+	# autocomplete_fields = ['pacotes']
+	# filter_horizontal = ('pacotes', 'treinamentoEmEquipamentos', 'contratos')
 
 	def changelist_view(self, request, extra_context=None):
 		extra_context = {'title': 'Lista de todos os usuários do espaço'}
@@ -67,12 +70,16 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		return my_urls + urls
 
 	record_rfid.short_description = "Selecione o usuario para criar seu cartão"
+
+class AgendamentoAdmin(admin.ModelAdmin):
+	autocomplete_fields = ('usuarios', 'recursos')
 	    
 admin.site.site_header = "Espaço MeViro"
 admin.site.site_title = "Gestão do Espaço MeViro"
-admin.site.index_title = "Bem vindo ao sistema de controle do Espaço MeViro."
+admin.site.index_title = "Sistema de administração do Espaço MeViro."
 
 admin.site.register(UsuarioEspaco, UsuarioEspacoAdmin)
+admin.site.register(Agendamento, AgendamentoAdmin)
 
 
 

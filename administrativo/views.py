@@ -1,22 +1,22 @@
 from django.http import HttpResponse
-from .models import Assinatura, IntervalosHorarios, DiasSemana, Fornecedor
+from .models import Pacote, Contrato, PeriodosReservaRecurso, Regra
 from rest_framework import viewsets
-from .serializers import AssinaturaSerializer, IntervalosHorariosSerializer, DiasSemanaSerializer, FornecedorSerializer
+from .serializers import PacoteSerializer, ContratoSerializer, PeriodosReservaRecursoSerializer, RegraSerializer
 
-class AssinaturaViewSet(viewsets.ModelViewSet):
-    queryset = Assinatura.objects.all()
-    serializer_class = AssinaturaSerializer
+class PacoteViewSet(viewsets.ModelViewSet):
+    queryset = Pacote.objects.all()
+    serializer_class = PacoteSerializer
 
-class IntervalosHorariosViewSet(viewsets.ModelViewSet):
-    queryset = IntervalosHorarios.objects.all()
-    serializer_class = IntervalosHorariosSerializer
+class ContratoViewSet(viewsets.ModelViewSet):
+    queryset = Contrato.objects.all()
+    serializer_class = ContratoSerializer
 
-class DiasSemanaViewSet(viewsets.ModelViewSet):
-    queryset = DiasSemana.objects.all()
-    serializer_class = DiasSemanaSerializer
+class PeriodosReservaRecursoViewSet(viewsets.ModelViewSet):
+    queryset = PeriodosReservaRecurso.objects.all()
+    serializer_class = PeriodosReservaRecursoSerializer
 
-class FornecedorViewSet(viewsets.ModelViewSet):
-    queryset = Fornecedor.objects.all()
-    serializer_class = FornecedorSerializer
+class RegraViewSet(viewsets.ModelViewSet):
+    queryset = Regra.objects.all()
+    serializer_class = RegraSerializer
 
 

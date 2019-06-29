@@ -1,43 +1,48 @@
-from .models import Assinatura, IntervalosHorarios, DiasSemana, Fornecedor
+from .models import Pacote, Contrato, PeriodosReservaRecurso, Regra
 from rest_framework import serializers
 
-class AssinaturaSerializer(serializers.HyperlinkedModelSerializer):
+class PacoteSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Assinatura
+        model = Pacote
         fields = (
         			'nome',
+					'descricao',
 					'data_implantacao',
 					'ultima_atualizacao',
-					'valor',
-					'periodo',
-					'observacao'
+					'valor_recorrente',
+					'valor_unico',
+					'valor_periodo_minimo',
+					'tipo_periodo_minimo',
+					'horas_por_credito',
+					'observacoes',
+					'pode_agendar_maquinas',
+					'regras',
+					'assinantes_tem_desconto_recurso',
+					'desconto_recurso_percentual',
+					'desconto_recurso_valor',
+					'cursos',
+					'outraAtividade',
+					'contrato'
 				)
 
-class IntervalosHorariosSerializer(serializers.HyperlinkedModelSerializer):
+class ContratoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = IntervalosHorarios
+        model = Contrato
         fields = (
-        			'intervalo'
+        			'nome'
 				)
 
-class DiasSemanaSerializer(serializers.HyperlinkedModelSerializer):
+class PeriodosReservaRecursoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = DiasSemana
+        model = PeriodosReservaRecurso
         fields = (
-        			'numero_dia',
-        			'dia'
-				)
+        			'periodo',
+        		)
 
-class FornecedorSerializer(serializers.HyperlinkedModelSerializer):
+class RegraSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Fornecedor
+        model = Regra
         fields = (
-        			'nome',
-					'endereco',
-					'site',
-					'cidade',
-					'estado',
-					'telefone',
-					'nome_contato',
-					'email_contato'
+        			'recursos',
+					'periodosReservaRecurso'
 				)

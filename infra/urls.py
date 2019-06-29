@@ -1,4 +1,6 @@
 from django.urls import path
-from . import views
+# from infra.admin import admin_site
 
-urlpatterns = []
+urlpatterns = [
+    # path('infra/', admin_site.urls),
+]

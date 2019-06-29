@@ -2,133 +2,105 @@
 from django.db import models
 from django.conf import settings
 from meviro_space import constants
-from financeiro.models import NotaFiscal
-from usuarios_meviro.models import UsuarioEspaco
-from administrativo.models import Assinatura, Fornecedor
 
-# from localflavor.br.forms import BRCPFField, BRStateChoiceField, BRStateSelect, BRZipCodeField
+class Fornecedor(models.Model):
+	nome = models.CharField(max_length=50, verbose_name="Nome do Fornecedor")
+	cnpj = models.CharField(max_length=30, blank=True, null=True, verbose_name="CNPJ do Fornecedor")
+	endereco = models.CharField(max_length=200, blank=True, null=True, verbose_name="Nome do Fornecedor")
+	site = models.CharField(max_length=70, blank=True, null=True)
+	cidade = models.CharField(max_length=50)
+	estado = models.CharField(max_length=2, choices=constants.STATE_CHOICES)
+	telefone = models.CharField(max_length=30, blank=True, null=True)
+	nome_contato = models.CharField(max_length=30, blank=True, null=True)
+	email_contato = models.CharField(max_length=50, blank=True, null=True)
 
-class Secao(models.Model):
-	nome = models.CharField(max_length=50)
-	descricao = models.CharField(max_length=200)
-	localizacao = models.CharField(max_length=50)
-
-	def __str__(self):
-		return u'%s (id:%s)' % (self.nome, self.id)
-	
-	class Meta:
-		verbose_name = "Seção"
-		verbose_name_plural = "Seções"
-
-class SecaoAssinatura(models.Model):
-	id_assinatura = models.ForeignKey(Assinatura, models.SET_NULL, blank=True, null=True)
-	id_secao = models.ForeignKey(Secao, models.SET_NULL, blank=True, null=True)
-
-	def __str__(self):
-		return u'%s(id:%s) <> %s(id:%s)' % (self.id_assinatura.nome, self.id_assinatura.id, self.id_secao.nome, self.id_secao.id)
-
-	class Meta:
-		verbose_name_plural = "Assinaturas <> Seções"
-		verbose_name = "Assinatura <> Seção"
-
-
-class Armarios(models.Model):
-	nome = models.CharField(max_length=50)
-	apelido = models.CharField(max_length=50)
-	secao = models.ForeignKey(Secao, models.SET_NULL, blank=True, null=True)
-
-	def __str__(self):
-		return u'%s - %s' % (self.nome, self.secao)
-	
-	class Meta:
-		verbose_name = "Armário"
-		verbose_name_plural = "Armários"
-
-
-class FuncaoFerramenta(models.Model):
-	nome = models.CharField(max_length=50)
-	
 	def __str__(self):
 		return u'%s' % (self.nome)
 
 	class Meta:
-		verbose_name = "Função da Ferramenta"
-		verbose_name_plural = "Função das Ferramentas"
+		verbose_name = "Fornecedor"
+		verbose_name_plural = "Fornecedores"
 
 
-class Ferramenta(models.Model):
-	nome = models.CharField(max_length=50)
-	modelo = models.CharField(max_length=50)
-	funcao_ferramenta = models.ForeignKey(FuncaoFerramenta, models.SET_NULL, blank=True, null=True,)
-	descricao = models.CharField(max_length=200)
-	fabricante = models.CharField(max_length=30)
-	data_aquisicao = models.DateField()
-	nota_fiscal = models.ForeignKey(NotaFiscal, models.SET_NULL, blank=True, null=True)
+class Recurso(models.Model):
+
+	TIPOS_RECURSOS = [
+	    ('porta', 'Porta'),
+		('terminal check-in/out', 'Terminal Check-in/out'),
+		('sala', 'Sala'),
+		('bancada', 'Bancada'),
+		('maquina', 'Maquina'),
+		('ferramenta manual', 'Ferramenta Manual'),
+		('ferramenta eletrica', 'Ferramenta Elétrica'),
+		('ferramenta pneumatica', 'Ferramenta Pneumática'),
+		('material insumo', 'Material Insumo')
+	]
+
+	tipo_recurso = models.CharField(max_length=30, choices=TIPOS_RECURSOS)
+	nome = models.CharField(max_length=30, verbose_name="Nome do Recurso", help_text="Aqui vai um texto de ajuda mesmo.")
+	apelido = models.CharField(max_length=30, blank=True, null=True, verbose_name="O recurso tem algum apelido?")
+	descricao = models.TextField(blank=True, null=True, verbose_name="Descrição")
+	fabricante = models.CharField(max_length=30, blank=True, null=True)
+	data_aquisicao = models.DateField(blank=True, null=True, verbose_name="Data da aquisição")
+	ultima_atualizacao =  models.DateField(blank=True, null=True, verbose_name="Última atualização")
+	voltagem = models.CharField(max_length=10, blank=True, null=True, choices=[('110v','110'),('220v','220')])
+	amperagem = models.IntegerField(blank=True, null=True)
+	potencia = models.IntegerField(blank=True, null=True, verbose_name="Potência")
+	codigo_meviro = models.IntegerField(blank=True, null=True, verbose_name="Código Referência MeViro")
+	requer_treinamento = models.BooleanField(default=False, verbose_name="Requer treinamento para o uso?")
+	requer_setup = models.BooleanField(default=False, verbose_name="Requer algum setup inicial para o uso?")
+	custo_hora = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, verbose_name="Custo de Uso por Hora")
+	custo_integral = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, verbose_name="Custo de Uso Integral")
+	custo_credito = models.IntegerField(blank=True, null=True, verbose_name="Custo de Uso por Crédito")
+	hora_max_dia_usuario = models.IntegerField(blank=True, null=True, verbose_name="Número máximo de horas de utilização por dia por usuário")
+	hora_max_sem_usuario = models.IntegerField(blank=True, null=True, verbose_name="Número máximo de horas de utilização por semana por usuário")
 	fornecedor = models.ForeignKey(Fornecedor, models.SET_NULL, blank=True, null=True)
-	foto = models.ImageField(upload_to='uploads/foto_ferramentas', blank=True)
-	ferramenta_eletrica = models.BooleanField(default=True)
-	voltagem = models.CharField(max_length=30, blank=True)
-	amperagem = models.CharField(max_length=30, blank=True)
-	potencia = models.CharField(max_length=30, blank=True)
-	secao = models.ForeignKey(Secao, models.SET_NULL, blank=True, null=True)
-	# numero_controle = models.CharField(max_length=30)
+	api_financeiro = models.CharField(max_length=30)
+	observacoes = models.TextField(null=True, blank=True, verbose_name="Observações")
 
 	def __str__(self):
-		return u'%s - %s' % (self.nome, self.fabricante)
+		return u'%s' % (self.nome)
 
 	class Meta:
-		verbose_name = "Ferramenta"
-		verbose_name_plural = "Ferramentas"
+		verbose_name = "Recurso"
+		verbose_name_plural = "Recursos"
+	
 
-class Maquina(models.Model):
-	nome = models.CharField(max_length=50)
-	modelo = models.CharField(max_length=50)
-	funcao_ferramenta = models.ForeignKey(FuncaoFerramenta, models.SET_NULL, blank=True, null=True,)
-	apelido = models.CharField(max_length=20)
-	descricao = models.CharField(max_length=200)
-	fabricante = models.CharField(max_length=30)
-	data_aquisicao = models.DateField()
-	data_ultima_manutencao = models.DateField()
-	descricao_ultima_manutencao = models.TextField(null=True)
-	nota_fiscal = models.ForeignKey(NotaFiscal, models.SET_NULL, blank=True, null=True)
-	fornecedor = models.ForeignKey(Fornecedor, models.SET_NULL, blank=True, null=True)
-	foto = models.ImageField(upload_to='uploads/foto_ferramentas', blank=True)
-	voltagem = models.CharField(max_length=30)
-	amperagem = models.CharField(max_length=30)
-	potencia = models.CharField(max_length=30)
-	secao = models.ForeignKey(Secao, models.SET_NULL, blank=True, null=True)
-	# numero_controle = models.CharField(max_length=30)
-
-	def __str__(self):
-		return u'%s - %s' % (self.nome, self.fabricante)
-
-	class Meta:
-		verbose_name = "Ferramenta"
-		verbose_name_plural = "Ferramentas"
-
-
-class Arduino(models.Model):
-	nome =  models.CharField(max_length=30, blank=True)
-	codigo =  models.CharField(max_length=30, blank=True)
+class Bridge(models.Model):
+	recurso = models.ForeignKey(Recurso, on_delete=models.DO_NOTHING, verbose_name="Com qual recurso se conecta?")
+	nome =  models.CharField(max_length=30, blank=True, verbose_name="Nome da Bridge")
+	codigo =  models.CharField(max_length=30, blank=True, verbose_name="Código da Bridge")
 
 	def __str__(self):
 		return u'%s (id:%s)' % (self.nome, self.id)
 	
 	class Meta:
-		verbose_name = "Arduino"
-		verbose_name_plural = "Arduinos"
+		verbose_name = "Brigde"
+		verbose_name_plural = "Brigdes"
 
 
-class ArduinoAuth(models.Model):
-	id_arduino = models.ForeignKey(Arduino, blank=True, null=True, on_delete=models.DO_NOTHING)
-	id_secao = models.ForeignKey(Secao, blank=True, null=True, on_delete=models.DO_NOTHING)
+# class Arduino(models.Model):
+# 	nome =  models.CharField(max_length=30, blank=True)
+# 	codigo =  models.CharField(max_length=30, blank=True)
+
+# 	def __str__(self):
+# 		return u'%s (id:%s)' % (self.nome, self.id)
 	
-	def __str__(self):
-		return u'%s(id:%s) <> %s(id:%s)' % (self.id_arduino.nome, self.id_arduino.id, self.id_secao.nome, self.id_secao.id)
+# 	class Meta:
+# 		verbose_name = "Brigde"
+# 		verbose_name_plural = "Brigdes"
+
+
+# class BridgeAuth(models.Model):
+# 	id_bridge = models.ForeignKey(Bridge, blank=True, null=True, on_delete=models.DO_NOTHING)
+# 	id_recurso = models.ForeignKey(Recurso, blank=True, null=True, on_delete=models.DO_NOTHING)
 	
-	class Meta:
-		verbose_name = "Arduino <> Seção"
-		verbose_name_plural = "Arduinos <> Seções"
+# 	def __str__(self):
+# 		return u'%s(id:%s) <> %s(id:%s)' % (self.id_bridge.nome, self.id_bridge.id, self.id_recurso.nome, self.id_recurso.id)
+	
+# 	class Meta:
+# 		verbose_name = "Brigde <> Recurso"
+# 		verbose_name_plural = "Brigdes <> Recursos"
 
 
 

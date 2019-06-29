@@ -2,10 +2,10 @@ from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
 from usuarios_meviro.views import UsuarioEspacoViewSet
-from administrativo.views import AssinaturaViewSet, IntervalosHorariosViewSet, DiasSemanaViewSet, FornecedorViewSet
-from infra.views import FerramentaViewSet
+from administrativo.views import PacoteViewSet, ContratoViewSet, PeriodosReservaRecursoViewSet, RegraViewSet
+from infra.views import RecursoViewSet
 from logs.views import LogAcessoEspacoUsuarioViewSet, LogUsoFerramentaUsuarioViewSet
-from api.views import api_login, authorize_arduino
+from api.views import api_login, authorize_bridge
 
 router = routers.DefaultRouter()
 router.register(r'u suarios_meviro', UsuarioEspacoViewSet)
@@ -26,36 +26,36 @@ usuario_espaco_update = UsuarioEspacoViewSet.as_view({
 	'post':'update'
 })
 ####
-assinatura_list = AssinaturaViewSet.as_view({
+pacotes_list = PacoteViewSet.as_view({
     'get': 'list',
 })
 
-assinatura_detail = AssinaturaViewSet.as_view({
+pacotes_detail = PacoteViewSet.as_view({
     'get': 'retrieve'
 })
 
-assinatura_add = AssinaturaViewSet.as_view({
+pacotes_add = PacoteViewSet.as_view({
 	'post': 'create'
 })
 
-assinatura_update = AssinaturaViewSet.as_view({
+pacotes_update = PacoteViewSet.as_view({
 	'post':'update'
 })
 
 ####
-ferramenta_list = FerramentaViewSet.as_view({
+recursos_list = RecursoViewSet.as_view({
     'get': 'list',
 })
 
-ferramenta_detail = FerramentaViewSet.as_view({
+recursos_detail = RecursoViewSet.as_view({
     'get': 'retrieve'
 })
 
-ferramenta_add = FerramentaViewSet.as_view({
+recursos_add = RecursoViewSet.as_view({
 	'post': 'create'
 })
 
-ferramenta_update = FerramentaViewSet.as_view({
+recursos_update = RecursoViewSet.as_view({
 	'post':'update'
 })
 
@@ -103,15 +103,15 @@ urlpatterns = [
     path('usuario_espaco/add/', usuario_espaco_add, name='usuario-espaco-add'),
     path('usuario_espaco/<int:pk>/update/', usuario_espaco_update, name='usuario-espaco-update'),
 
-    path('assinatura/', assinatura_list, name='assinatura-list'),
-    path('assinatura/<int:pk>/', assinatura_detail, name='assinatura-detail'),
-    path('assinatura/add/', assinatura_add, name='assinatura-add'),
-    path('assinatura/<int:pk>/update/', assinatura_update, name='assinatura-update'),
+    path('pacotes/', pacotes_list, name='pacotes-list'),
+    path('pacotes/<int:pk>/', pacotes_detail, name='pacotes-detail'),
+    path('pacotes/add/', pacotes_add, name='pacotes-add'),
+    path('pacotes/<int:pk>/update/', pacotes_update, name='pacotes-update'),
 
-    path('ferramenta/', ferramenta_list, name='ferramenta-list'),
-    path('ferramenta/<int:pk>/', ferramenta_detail, name='ferramenta-detail'),
-    path('ferramenta/add/', ferramenta_add, name='ferramenta-add'),
-    path('ferramenta/<int:pk>/update/', ferramenta_update, name='ferramenta-update'),
+    path('recursos/', recursos_list, name='recursos-list'),
+    path('recursos/<int:pk>/', recursos_detail, name='recursos-detail'),
+    path('recursos/add/', recursos_add, name='recursos-add'),
+    path('recursos/<int:pk>/update/', recursos_update, name='recursos-update'),
 
     path('log_acesso/', log_acesso_list, name='log-acesso-list'),
     path('log_acesso/<int:pk>/', log_acesso_detail, name='log-acesso-detail'),
@@ -122,7 +122,7 @@ urlpatterns = [
     # path('log_uso/detail/<int:pk>/', log_uso_detail, name='log-uso-detail'),
     path('log_uso/add/', log_uso_add, name='log-uso-add'),
     # path('log_uso/update/<int:pk>/update/', log_uso_update, name='log-uso-update')
-    path('p/<int:id_arduino>/<int:id_usuario>', authorize_arduino)
+    path('p/<int:id_arduino>/<int:id_usuario>', authorize_bridge)
     
   # END: API PATHS
 

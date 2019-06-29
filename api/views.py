@@ -13,7 +13,7 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 from rest_framework.response import Response
-from infra.models import Arduino, ArduinoAuth, SecaoAssinatura
+from infra.models import Bridge #, SecaoAssinatura
 from usuarios_meviro.models import UsuarioEspaco
 from logs.models import LogUsoFerramentaUsuario
 #END: imports related to api authentication
@@ -36,24 +36,24 @@ def api_login(request): #this method will return the token, if valid
     return Response({'token': token.key},
                     status=HTTP_200_OK)
 
-def authorize_arduino(request, id_arduino, id_usuario):
+def authorize_bridge(request, id_arduino, id_usuario):
     try:
-        arduino_secao = ArduinoAuth.objects.get(id_arduino=id_arduino)
+        brigde_recurso = id_bridge#BridgeAuth.objects.get(id_bridge=id_bridge)
     except:
         return JsonResponse({'auth': False});
     
-    id_secao = arduino_secao.id_secao.id
+    id_recurso = bridge_recurso.id_recurso.id
 
     usuario = UsuarioEspaco.objects.get(id=id_usuario)
     
-    secao_assinaturas = SecaoAssinatura.objects.filter(id_assinatura=usuario.tipo_assinatura_id, id_secao=id_secao)
+    secao_assinaturas = None#SecaoAssinatura.objects.filter(id_assinatura=usuario.tipo_assinatura_id, id_secao=id_secao)
 
 
     if (not secao_assinaturas):
         return JsonResponse({'auth': False});
     
-    arduino = Arduino.objects.get(id=id_arduino)
-    log_uso_ferramenta = LogUsoFerramentaUsuario(id_usuario=usuario, id_arduino=arduino)
+    bridge = Bridge.objects.get(id=id_bridge)
+    log_uso_ferramenta = LogUsoFerramentaUsuario(id_usuario=usuario, id_bridge=bridge)
     log_uso_ferramenta.save()
 
     return JsonResponse({'auth': True});
