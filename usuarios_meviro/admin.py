@@ -19,10 +19,8 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 	list_display = ('primeiro_nome', 'sobrenome', 'email', 'restart_button')
 	actions = ['record_rfid']
 	search_fields = ['primeiro_nome', 'sobrenome', 'email']
-	# list_filter = ('tipo_assinatura','tipo_funcionario')
-	# autocomplete_fields = ['pacotes']
-	# filter_horizontal = ('pacotes', 'treinamentoEmEquipamentos', 'contratos')
-
+	filter_horizontal = ('treinamentoEmEquipamentos', )
+	
 	def changelist_view(self, request, extra_context=None):
 		extra_context = {'title': 'Lista de todos os usuários do espaço'}
 		return super(UsuarioEspacoAdmin, self).changelist_view(request, extra_context=extra_context)
