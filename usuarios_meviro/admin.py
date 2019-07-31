@@ -257,13 +257,13 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     		url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
     	return HttpResponseRedirect(url)
    
-    def acessar_auth_token(self, request):
+    def acessar_auth_token(self, request, code):
     	client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
     	client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
     	to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
     	encoded = base64.b64encode(to_encode.encode('ascii'))
     	headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
-    	post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', 'code': 'ASX2iEeLMbCTPFaLNU48jYPGqG1ScybB'}
+    	post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', 'code': code}
     	response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
     	# requests.request("POST", url, headers=headers, params=querystring)
     	content = response.content
@@ -271,7 +271,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	print(response.text)
     	extra_context = {'access_token': '123'}
     	url = reverse('admin:%s_%s_changelist' % ('usuarios_meviro', 'pacoteporusuario'))
-    	# messages.success(request, content)
+    	messages.success(request, content)
     	return HttpResponseRedirect(url)
     	# return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 
@@ -299,7 +299,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
         extra_context = {'code': code, 'access_token': access_token} 
         if (code):
         	print("Code")
-        	self.acessar_auth_token(request)
+        	self.acessar_auth_token(request, code)
 
         return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
         # return super(PacotePorUsuarioAdmin, self)\
