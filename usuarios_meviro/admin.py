@@ -214,6 +214,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	    urls = super().get_urls()
 	    my_urls = [
 	        path('sincronizar_pacotes_contaazul/', self.admin_site.admin_view(self.sincronizar_pacotes_contaazul), name='sincronizar_pacotes_contaazul'),
+	        path('acessar_auth_token/', self.admin_site.admin_view(self.acessar_auth_token), name='acessar_auth_token'),
 		]
 	    
 	    # print(request.GET.get('code'))
@@ -257,6 +258,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario', 'code': '4fz1G4AooaXkR5DdH0oB3aTTQyNr3s9O'}
     	response = requests.post('https://api.contaazul.com/oauth2/token', data=post_data)
     	content = response.content
+    	print(content)
     	extra_context = {'code': code, 'access_token': content}
     	return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 
