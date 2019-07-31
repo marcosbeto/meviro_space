@@ -103,7 +103,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 			client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
 			state_code = 'orivem'
 			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
-			url = endpoint.format(CLIENT_ID=client_id, STATE=state_code)
+			url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
 			# headers = {}
 			# print(url)
 			# response = requests.get(url)
