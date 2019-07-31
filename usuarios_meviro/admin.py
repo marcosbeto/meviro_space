@@ -271,7 +271,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	print(response.text)
     	extra_context = {'access_token': '123'}
     	url = reverse('admin:%s_%s_changelist' % ('usuarios_meviro', 'pacoteporusuario'))
-    	messages.success(request, content)
+    	messages.success(request, content.get('access_token'))
     	return HttpResponseRedirect(url)
     	# return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 
