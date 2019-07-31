@@ -10,6 +10,7 @@ from django.template.response import TemplateResponse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 import json, codecs
+from django.shortcuts import render
 
 from django import forms
 
