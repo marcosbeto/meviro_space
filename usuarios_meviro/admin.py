@@ -79,7 +79,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	
 	def changelist_view(self, request, extra_context=None):
 		print("eeeeeeitaaaaaa")
-		code = request.GET.get('code')
+		code = request.GET
 		extra_context = {'title': code}
 		return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 	# def changelist_view(self, request, *args, **kwargs):
