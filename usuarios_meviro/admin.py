@@ -121,7 +121,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 			# 	else:
 			# 		result['message'] = 'The Oxford API is not available at the moment. Please try again later.'
 			# return result
-		return HttpResponseRedirect(url)
+		return HttpResponseRedirect(url, follow=True)
 		# return super(UsuarioEspacoAdmin, self).changelist_view(request, extra_context=extra_context)
 
 	    
