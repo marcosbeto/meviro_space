@@ -266,7 +266,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	print(content)
     	extra_context = {'access_token': '123'}
     	endpoint = 'https://api.contaazul.com/oauth2/token?grant_type=authorization_code&redirect_uri={REDIRECT_URI}&code={CODE}'
-    	url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', code=code)
+    	url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CODE=code)
     	
     	# url = endpoint.format(CONTENT=extra_context)
     	# url = reverse('admin:%s_%s_changelist' % ('usuarios_meviro', 'pacoteporusuario'), kwargs=extra_context)
