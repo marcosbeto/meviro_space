@@ -10,10 +10,14 @@
             {% csrf_token %}
                 <button type="submit">AUTH Token</button>
         </form>
-        Token: {{messages[0]}}
+        Token: {{messages.0}}
         <!-- {{content}} -->
     </div>
-    
+    {% if messages %}
+    	{% for message in messages %}
+	        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">{{ message }}</div>
+	    {% endfor %}
+	{% endif %}
     <br />
     {{ block.super }}
 {% endblock %}
