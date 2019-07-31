@@ -260,7 +260,10 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	content = response.content
     	print(content)
     	extra_context = {'access_token': content}
-    	return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
+    	return render(request,
+                      'admin/usuarios_meviro/pacote_porusuario',
+                      context=extra_context)
+    	# return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 
     def changelist_view(self, request, extra_context=None, **kwargs):
         self.other_search_fields = {} 
