@@ -76,12 +76,18 @@ class AgendamentoAdmin(admin.ModelAdmin):
 class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	
 	change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
+	code = ""
 	
-	# def changelist_view(self, request, extra_context=None):
-	# 	print("eeeeeeitaaaaaa")
-	# 	code = request.GET
-	# 	extra_context = {'title': code}
-	# 	return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
+	def changelist_view(self, request, extra_context=None):
+		print("eeeeeeitaaaaaa")
+		request.GET._mutable = True
+		self.code = request.GET.get('code')
+		print(self.code)
+		request.GET.pop('code')
+
+		extra_context = {'title': 'Lista de todos os usuários do espaço', 'code':self.code}
+		return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
+	
 	# def changelist_view(self, request, *args, **kwargs):
 	# 	# self.request = request
 	# 	print("eeeeeeitaaaaaa")
