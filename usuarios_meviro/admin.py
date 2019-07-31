@@ -263,10 +263,13 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	print(code)
     	client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
     	client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
-    	
-    	headers={'Authorization': 'Basic' + base64.b64encode((client_id + ':' + client_key).encode("utf-8"))}
+    	to_encode = '{CLIENT_ID}:{CLIENT_KEY}'
+    	to_encode = to_encode.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
+    	encoded = base64.b64encode(to_encode.encode('ascii'))
+    	authorization = 'Basic %s' % encoded
+    	headers={'Authorization': authorization}
     	post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario', 'code': '4fz1G4AooaXkR5DdH0oB3aTTQyNr3s9O'}
-    	response = requests.post('https://api.contaazul.com/oauth2/token', data=post_data)
+    	response = requests.post('https://api.contaazul.com/oauth2/token', data=post_data, headers=headers)
     	content = response.content
     	print(content)
     	extra_context = {'access_token': '123'}
