@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+import json, codecs
 
 from .models import UsuarioEspaco, Agendamento, PacotePorUsuario, CreditoPorUsuario
 
@@ -76,6 +77,12 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	
 	change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
 	
+
+	def changelist_view(self, request, *args, **kwargs):
+		self.request = request
+		print("eeeeeeitaaaaaa")
+		print(request.GET.get('code'))
+
 	def get_urls(self):
 	    urls = super().get_urls()
 	    my_urls = [
@@ -83,28 +90,34 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	    ]
 	    return my_urls + urls
 
-	def sincronizar_pacotes_contaazul(self, request, extra_context=None):
+	def sincronizar_pacotes_contaazul(self, request):
+		print(request)
+		reader = codecs.getreader("utf-8")
 		if request.method == 'GET':
 			client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
 			client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
 			state_code = 'orivem'
 			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
 			url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
-			headers = {}
-			response = requests.get(url, headers=headers)
-			if response.status_code == 200:  # SUCCESS
-				result = response.json()
-				print(result)
-				result['success'] = True
-			else:
-				result['success'] = False
-				if response.status_code == 404:  # NOT FOUND
-					result['message'] = 'No entry found for "%s"' % word
-				else:
-					result['message'] = 'The Oxford API is not available at the moment. Please try again later.'
-			return result
-    
-		return super(UsuarioEspacoAdmin, self).changelist_view(request, extra_context=extra_context)
+			# headers = {}
+			# print(url)
+			# response = requests.get(url)
+			# if response.status_code == 200:  # SUCCESS
+			# 	result = response
+			# 	print(type(response))
+			# 	print(result.data)
+			# 	data = json.load(reader(result))
+			# 	print(data)
+			# 	result['success'] = True
+			# else:
+			# 	result['success'] = False
+			# 	if response.status_code == 404:  # NOT FOUND
+			# 		result['message'] = 'No entry found for "%s"' % word
+			# 	else:
+			# 		result['message'] = 'The Oxford API is not available at the moment. Please try again later.'
+			# return result
+		return HttpResponseRedirect(url)
+		# return super(UsuarioEspacoAdmin, self).changelist_view(request, extra_context=extra_context)
 
 	    
 admin.site.site_header = "Espaço MeViro"
