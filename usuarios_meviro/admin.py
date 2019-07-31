@@ -83,7 +83,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 		request.GET._mutable = True
 		self.code = request.GET.get('code')
 		print(self.code)
-		request.GET.pop('code')
+		request.GET.pop()
 
 		extra_context = {'title': 'Lista de todos os usuários do espaço', 'code':self.code}
 		return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
