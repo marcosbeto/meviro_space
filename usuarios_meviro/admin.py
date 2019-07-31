@@ -12,6 +12,7 @@ from django.contrib import messages
 import json, codecs
 from django.shortcuts import render
 from django.contrib import messages
+import base64
 
 from django import forms
 
