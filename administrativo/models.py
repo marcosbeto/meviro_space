@@ -50,6 +50,11 @@ class Regra(models.Model):
 		verbose_name = "Regra de Uso"
 		verbose_name_plural = "Regras de Uso (Máquina por Período)"
 
+class Servico(models.Model):
+	nome = models.CharField(max_length=254, verbose_name="Nome do Serviço")
+
+class OutrosProdutos(models.Model):
+	nome = models.CharField(max_length=60, verbose_name="Nome do Produto")
 
 class Pacote(models.Model):
 	nome = models.CharField(max_length=60, verbose_name="Nome do Pacote", help_text="Pacote de Assinaturas, Cursos ou Outras Atividades.")

@@ -47,7 +47,32 @@ class UsuarioEspaco(models.Model):
 		verbose_name_plural = "Usuários do Espaço"
 		verbose_name = "Usuário do Espaço"
 		 
-	
+
+class PacotePorUsuario(models.Model):
+	usuario = models.ForeignKey(UsuarioEspaco, on_delete=models.DO_NOTHING, verbose_name="Nome do Usuário")
+	pacote = models.ForeignKey(Pacote, on_delete=models.DO_NOTHING, verbose_name="Pacote")
+	ativo = models.BooleanField(default=False, verbose_name="Este plano está ativo?")
+	data_ativacao = models.DateField(verbose_name="Data de Ativação")
+	data_encerramento = models.DateField(verbose_name="Data de Encerramento")
+	id_venda = models.IntegerField(blank=True, null=True, verbose_name="ID Venda ContaAzul")
+
+	class Meta:
+		verbose_name_plural = "Pacotes por Usuário"
+		verbose_name = "Pacote por Usuário"
+
+class CreditoPorUsuario(models.Model):
+	usuario = models.ForeignKey(UsuarioEspaco, on_delete=models.DO_NOTHING, verbose_name="Nome do Usuário")
+	numero_creditos = models.ForeignKey(Pacote, on_delete=models.DO_NOTHING, verbose_name="Pacote")
+	is_active = models.BooleanField(default=False, verbose_name="Este plano está ativo?")
+	data_compra = models.DateField(verbose_name="Data de Ativação")
+	data_encerramento = models.DateField(verbose_name="Data de Encerramento")
+	id_venda = models.IntegerField(blank=True, null=True, verbose_name="ID Venda ContaAzul")
+
+	class Meta:
+		verbose_name_plural = "Créditos por Usuário"
+		verbose_name = "Crédito por Usuário"
+
+
 class Agendamento(models.Model):
 
 	TIMES_CHOICES = [

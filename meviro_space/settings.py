@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'educacao',
     'administrativo',
     'logs',
-    'venda',
+    # 'venda',
     'api'    
 ]
 
@@ -185,7 +185,7 @@ BOOTSTRAP_ADMIN_SIDEBAR_MENU = False
 
 APP_ORDER = [
         'usuarios_meviro',
-        'venda',
+        # 'venda',
         'administrativo',
         'infra',
         'educacao',
