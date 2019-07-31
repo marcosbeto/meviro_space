@@ -11,6 +11,8 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 import json, codecs
 
+from django import forms
+
 from .models import UsuarioEspaco, Agendamento, PacotePorUsuario, CreditoPorUsuario
 
 
@@ -73,19 +75,27 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 class AgendamentoAdmin(admin.ModelAdmin):
 	autocomplete_fields = ('usuarios', 'recursos')
 
+
+class FormForAdvancedSearch(forms.Form):
+    #you can put any field here this is an example so only 1 simple CharField
+    code = forms.CharField()
+    state = forms.CharField()
+
 class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	
 	change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
 	code = ""
 	search_fields = ['code','state']
 	other_search_fields = {}
-	
+	advanced_search_form = FormForAdvancedSearch()
+
+
 	def changelist_view(self, request, extra_context=None):
 		self.code = request.GET.get('code')
 		self.other_search_fields = {} 
 
-		extra_context = {'title': 'Lista de todos os usuários do espaço', 'code':self.code}        
-        # we now need to remove the elements coming from the form
+		extra_context = {'title': 'Lista de todos os usuários do espaço', 'asf':self.advanced_search_form}        
+		# we now need to remove the elements coming from the form
         # and save in the other_search_fields dict but it's not allowed
         # to do that in place so we need to temporary enable mutability ( I don't think     
         # it will cause any complicance but maybe someone more exeprienced on how 
@@ -146,6 +156,30 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 			# return result
 		return HttpResponseRedirect(url)
 		# return super(UsuarioEspacoAdmin, self).changelist_view(request, extra_context=extra_context)
+
+
+# you need a templatetag to rewrite the standard search_form tag because the default   
+# templatetag to render the search form doesn't handle context so here it is:
+# remember to put it inside a source file (in my case is custom_search_form.py) that  
+# lives in project/myapp/templatetags otherwise will not be found by the template engine 
+
+from django.contrib.admin.views.main import SEARCH_VAR
+
+from django.template import Library
+
+register = Library()
+
+@register.inclusion_tag('admin/usuarios_meviro/pacoteporusuario/search_form.html', takes_context=True)
+def advanced_search_form(context, cl):
+    """
+    Displays a search form for searching the list.
+    """
+    return {
+        'asf' : context.get('asf'),
+        'cl': cl,
+        'show_result_count': cl.result_count != cl.full_result_count,
+        'search_var': SEARCH_VAR
+    }
 
 	    
 admin.site.site_header = "Espaço MeViro"
