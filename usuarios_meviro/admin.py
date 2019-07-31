@@ -262,7 +262,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	print(content)
     	extra_context = {'access_token': content}
     	return render(request,
-                      'admin/usuarios_meviro/pacote_porusuario',
+                      'admin/usuarios_meviro/pacoteporusuario',
                       context=extra_context)
     	# return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 
