@@ -299,7 +299,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
         extra_context = {'code': code, 'access_token': access_token} 
         if (code):
         	print("Code")
-        	self.acessar_auth_token()
+        	self.acessar_auth_token(request)
 
         return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
         # return super(PacotePorUsuarioAdmin, self)\
