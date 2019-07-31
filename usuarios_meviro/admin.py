@@ -11,6 +11,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 import json, codecs
 from django.shortcuts import render
+from django.contrib import messages
 
 from django import forms
 
@@ -261,9 +262,10 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	content = response.content
     	print(content)
     	extra_context = {'access_token': '123'}
-    	endpoint = 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/?content=%s' % content
+    	endpoint = 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/'
     	# url = endpoint.format(CONTENT=extra_context)
     	# url = reverse('admin:%s_%s_changelist' % ('usuarios_meviro', 'pacoteporusuario'), kwargs=extra_context)
+    	messages.success(request, 'Changes successfully saved.')
     	return HttpResponseRedirect(endpoint)
     	# return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 
