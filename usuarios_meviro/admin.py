@@ -66,7 +66,9 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 	def get_urls(self):
 		# use get_urls for easy adding of views to the admin
 		urls = super(UsuarioEspacoAdmin, self).get_urls()
-		my_urls = [path('record_rfid/<int:id_usuario>/', self.admin_site.admin_view(self.record_rfid), name='record_rfid'),]
+		my_urls = [
+			path('record_rfid/<int:id_usuario>/', self.admin_site.admin_view(self.record_rfid), name='record_rfid'),
+		]
 
 		return my_urls + urls
 
@@ -76,110 +78,208 @@ class AgendamentoAdmin(admin.ModelAdmin):
 	autocomplete_fields = ('usuarios', 'recursos')
 
 
-class FormForAdvancedSearch(forms.Form):
-    #you can put any field here this is an example so only 1 simple CharField
+# class FormForAdvancedSearch(forms.Form):
+#     #you can put any field here this is an example so only 1 simple CharField
+#     code = forms.CharField()
+#     state = forms.CharField()
+
+# class PacotePorUsuarioAdmin(admin.ModelAdmin):
+	
+# 	change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
+# 	code = ""
+# 	search_fields = ['code','state']
+# 	actions = ['sincronizar_pacotes_contaazul']
+# 	other_search_fields = {}
+# 	advanced_search_form = FormForAdvancedSearch()
+
+# 	def sincronizar_pacotes_contaazul(self, request):
+# 		print("eeeepaaaa")
+# 		if request.method == 'GET':
+# 			client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
+# 			client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
+# 			state_code = 'orivem'
+# 			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
+# 			url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
+# 		return HttpResponseRedirect(url)
+
+
+	def syncronize_contaazul(self, request):
+		context = {
+		        'opts': self.model._meta,
+		        'app_label': self.model._meta.app_label, 
+		        'change': False,
+		        'add': False,
+		        'is_popup': False,
+		        'save_as': False,
+		        'has_delete_permission': False,
+		        'has_add_permission': False,
+		        'has_change_permission': True,
+		    }
+		return TemplateResponse(request, "admin/auth_contaazul.html", context)
+
+# 	def changelist_view(self, request, extra_context=None):
+# 		self.code = request.GET.get('code')
+# 		self.other_search_fields = {} 
+
+# 		# extra_context = {'title': 'Lista de todos os usuários do espaço'}        
+# 		# # we now need to remove the elements coming from the form
+#   #       # and save in the other_search_fields dict but it's not allowed
+#   #       # to do that in place so we need to temporary enable mutability ( I don't think     
+#   #       # it will cause any complicance but maybe someone more exeprienced on how 
+#   #       # QueryDict works could explain it better) 
+# 		# request.GET._mutable=True
+        
+# 		# for key in asf.fields.keys():
+# 		# 	try:
+# 		# 		temp = request.GET.pop(key)
+# 		# 	except KeyError:
+# 		# 		pass # there is no field of the form in the dict so we don't remove it
+# 		# 	else:
+# 		# 		if temp!=['']: #there is a field but it's empty so it's useless
+# 		# 			self.other_search_fields[key] = temp 
+                
+# 		# request.GET_mutable=False
+		
+# 		return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
+	
+# 	# def changelist_view(self, request, *args, **kwargs):
+# 	# 	# self.request = request
+# 	# 	print("eeeeeeitaaaaaa")
+# 	# 	# print(request.GET.get('code'))
+
+# 	def get_urls(self):
+# 	    urls = super().get_urls()
+# 	    my_urls = [
+# 	        path('syncronize_contaazul/', self.admin_site.admin_view(self.syncronize_contaazul), name='syncronize_contaazul'),
+# 		]
+	    
+# 	    # print(request.GET.get('code'))
+# 	    return my_urls + urls
+
+# 	def sincronizar_pacotes_contaazul(self, request):
+# 		print(request)
+# 		reader = codecs.getreader("utf-8")
+# 		if request.method == 'GET':
+# 			client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
+# 			client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
+# 			state_code = 'orivem'
+# 			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
+# 			url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
+# 		return HttpResponseRedirect(url)
+# 		# return super(UsuarioEspacoAdmin, self).changelist_view(request, extra_context=extra_context)
+
+
+# # you need a templatetag to rewrite the standard search_form tag because the default   
+# # templatetag to render the search form doesn't handle context so here it is:
+# # remember to put it inside a source file (in my case is custom_search_form.py) that  
+# # lives in project/myapp/templatetags otherwise will not be found by the template engine 
+
+# from django.contrib.admin.views.main import SEARCH_VAR
+
+# from django.template import Library
+
+# register = Library()
+
+# @register.inclusion_tag('admin/usuarios_meviro/pacoteporusuario/search_form.html', takes_context=True)
+# def advanced_search_form(context, cl):
+#     """
+#     Displays a search form for searching the list.
+#     """
+#     return {
+#         'asf' : context.get('asf'),
+#         'cl': cl,
+#         'show_result_count': cl.result_count != cl.full_result_count,
+#         'search_var': SEARCH_VAR
+#     }
+
+
+
+
+
+
+
+#####
+
+class ActiveFilterForm(forms.Form):
     code = forms.CharField()
     state = forms.CharField()
 
-class PacotePorUsuarioAdmin(admin.ModelAdmin):
-	
-	change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
-	code = ""
-	search_fields = ['code','state']
-	other_search_fields = {}
-	advanced_search_form = FormForAdvancedSearch()
+class PacotePorUsuarioAdmin(admin.ModelAdmin): 
 
+    advanced_search_form = ActiveFilterForm()
+    change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
+    actions = ['sincronizar_pacotes_contaazul']
 
-	def changelist_view(self, request, extra_context=None):
-		self.code = request.GET.get('code')
-		self.other_search_fields = {} 
-
-		extra_context = {'title': 'Lista de todos os usuários do espaço', 'asf':self.advanced_search_form}        
-		# we now need to remove the elements coming from the form
-        # and save in the other_search_fields dict but it's not allowed
-        # to do that in place so we need to temporary enable mutability ( I don't think     
-        # it will cause any complicance but maybe someone more exeprienced on how 
-        # QueryDict works could explain it better) 
-		request.GET._mutable=True
-        
-		for key in asf.fields.keys():
-			try:
-				temp = request.GET.pop(key)
-			except KeyError:
-				pass # there is no field of the form in the dict so we don't remove it
-			else:
-				if temp!=['']: #there is a field but it's empty so it's useless
-					self.other_search_fields[key] = temp 
-                
-		request.GET_mutable=False
-		
-		return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
-	
-	# def changelist_view(self, request, *args, **kwargs):
-	# 	# self.request = request
-	# 	print("eeeeeeitaaaaaa")
-	# 	# print(request.GET.get('code'))
-
-	def get_urls(self):
+    def get_urls(self):
 	    urls = super().get_urls()
 	    my_urls = [
-	        path('sincronizar_pacotes_contaazul/', self.sincronizar_pacotes_contaazul),
-	    ]
+	        path('sincronizar_pacotes_contaazul/', self.admin_site.admin_view(self.sincronizar_pacotes_contaazul), name='sincronizar_pacotes_contaazul'),
+		]
+	    
 	    # print(request.GET.get('code'))
 	    return my_urls + urls
 
-	def sincronizar_pacotes_contaazul(self, request):
-		print(request)
-		reader = codecs.getreader("utf-8")
-		if request.method == 'GET':
-			client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
-			client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
-			state_code = 'orivem'
-			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
-			url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
-			# headers = {}
-			# print(url)
-			# response = requests.get(url)
-			# if response.status_code == 200:  # SUCCESS
-			# 	result = response
-			# 	print(type(response))
-			# 	print(result.data)
-			# 	data = json.load(reader(result))
-			# 	print(data)
-			# 	result['success'] = True
-			# else:
-			# 	result['success'] = False
-			# 	if response.status_code == 404:  # NOT FOUND
-			# 		result['message'] = 'No entry found for "%s"' % word
-			# 	else:
-			# 		result['message'] = 'The Oxford API is not available at the moment. Please try again later.'
-			# return result
-		return HttpResponseRedirect(url)
-		# return super(UsuarioEspacoAdmin, self).changelist_view(request, extra_context=extra_context)
+    def get_changelist(self, request, **kwargs):
+
+        from django.contrib.admin.views.main import ChangeList
+        code = self.other_search_fields.get('code',None)
+        # now we have the active_pp parameter that was passed in and can use it.
+
+        class ActiveChangeList(ChangeList):
+
+            def get_query_set(self, *args, **kwargs):
+                now = datetime.datetime.now()
+                qs = super(ActiveChangeList, self).get_query_set(*args, **kwargs)
+                return qs.filter((Q(start_date=None) | Q(start_date__lte=now))
+                                 & (Q(end_date=None) | Q(end_date__gte=now)))
+
+        if not code is None:
+            return ActiveChangeList
+
+        return ChangeList
 
 
-# you need a templatetag to rewrite the standard search_form tag because the default   
-# templatetag to render the search form doesn't handle context so here it is:
-# remember to put it inside a source file (in my case is custom_search_form.py) that  
-# lives in project/myapp/templatetags otherwise will not be found by the template engine 
+    def lookup_allowed(self, lookup):
+        if lookup in self.advanced_search_form.fields.keys():
+            return True
+        return super(MyModelAdmin, self).lookup_allowed(lookup)
 
-from django.contrib.admin.views.main import SEARCH_VAR
+    def sincronizar_pacotes_contaazul(self, request):
+    	print("tamaquuiuuuu")
+    	if request.method == 'GET':
+    		client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
+    		client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
+    		state_code = 'orivem'
+    		endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
+    		url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
+    	return HttpResponseRedirect(url)
 
-from django.template import Library
+    def changelist_view(self, request, extra_context=None, **kwargs):
+        self.other_search_fields = {} 
+        asf = self.advanced_search_form
+        extra_context = {'asf':asf}
 
-register = Library()
+        request.GET._mutable=True
 
-@register.inclusion_tag('admin/usuarios_meviro/pacoteporusuario/search_form.html', takes_context=True)
-def advanced_search_form(context, cl):
-    """
-    Displays a search form for searching the list.
-    """
-    return {
-        'asf' : context.get('asf'),
-        'cl': cl,
-        'show_result_count': cl.result_count != cl.full_result_count,
-        'search_var': SEARCH_VAR
-    }
+        for key in asf.fields.keys():
+            try:
+                temp = request.GET.pop(key)
+            except KeyError:
+                pass 
+            else:
+                if temp!=['']: 
+                    self.other_search_fields[key] = temp 
+
+        request.GET_mutable=False
+        return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
+        # return super(PacotePorUsuarioAdmin, self)\
+               # .changelist_view(request, extra_context=extra_context)
+
+#####
+
+
+
+
 
 	    
 admin.site.site_header = "Espaço MeViro"
