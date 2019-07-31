@@ -258,38 +258,32 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	return HttpResponseRedirect(url)
    
     def acessar_auth_token(self, request):
-    	code = request.GET.get('code')
-    	print("############################")
-    	print(code)
     	client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
     	client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
-    	to_encode = '{CLIENT_ID}:{CLIENT_KEY}'
-    	to_encode = to_encode.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
+    	to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
     	encoded = base64.b64encode(to_encode.encode('ascii'))
-    	authorization = 'Basic %s' % encoded
-    	headers={'Authorization': authorization}
-    	post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario', 'code': '4fz1G4AooaXkR5DdH0oB3aTTQyNr3s9O'}
-    	print(headers)
-    	response = requests.post('https://api.contaazul.com/oauth2/token', data=post_data, headers=headers)
+    	headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
+    	post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', 'code': 'ASX2iEeLMbCTPFaLNU48jYPGqG1ScybB'}
+    	response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
+    	# requests.request("POST", url, headers=headers, params=querystring)
     	content = response.content
-    	print(content)
+    	print("CONTEEEEEENT")
+    	print(response.text)
     	extra_context = {'access_token': '123'}
-    	endpoint = 'https://api.contaazul.com/oauth2/token?grant_type=authorization_code&redirect_uri={REDIRECT_URI}&code={CODE}'
-    	url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CODE=code)
-    	
-    	# url = endpoint.format(CONTENT=extra_context)
-    	# url = reverse('admin:%s_%s_changelist' % ('usuarios_meviro', 'pacoteporusuario'), kwargs=extra_context)
-    	messages.success(request, content)
+    	url = reverse('admin:%s_%s_changelist' % ('usuarios_meviro', 'pacoteporusuario'))
+    	# messages.success(request, content)
     	return HttpResponseRedirect(url)
     	# return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 
     def changelist_view(self, request, extra_context=None, **kwargs):
         self.other_search_fields = {} 
+        print("AQUIIIIIII DE NOVO");
         code = request.GET.get('code')
+        if (code):
+        	print("Code")
         access_token = request.GET.get('access_token')
         asf = self.advanced_search_form
         extra_context = {'asf':asf}
-
         request.GET._mutable=True
 
         for key in asf.fields.keys():
@@ -302,7 +296,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
                     self.other_search_fields[key] = temp 
 
         request.GET_mutable=False
-        extra_context = {'code': code, 'access_token': access_token}
+        extra_context = {'code': code, 'access_token': access_token} 
         return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
         # return super(PacotePorUsuarioAdmin, self)\
                # .changelist_view(request, extra_context=extra_context)
