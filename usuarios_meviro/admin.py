@@ -103,7 +103,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 			client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
 			state_code = 'orivem'
 			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
-			url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
+			url = endpoint.format(CLIENT_ID=client_id, STATE=state_code)
 			# headers = {}
 			# print(url)
 			# response = requests.get(url)
@@ -121,7 +121,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 			# 	else:
 			# 		result['message'] = 'The Oxford API is not available at the moment. Please try again later.'
 			# return result
-		return HttpResponseRedirect(url, follow=True)
+		return HttpResponseRedirect(url)
 		# return super(UsuarioEspacoAdmin, self).changelist_view(request, extra_context=extra_context)
 
 	    
