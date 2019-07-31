@@ -256,6 +256,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 
     def changelist_view(self, request, extra_context=None, **kwargs):
         self.other_search_fields = {} 
+        code = request.GET.get('code')
         asf = self.advanced_search_form
         extra_context = {'asf':asf}
 
@@ -271,6 +272,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
                     self.other_search_fields[key] = temp 
 
         request.GET_mutable=False
+        extra_context = {'code': code}
         return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
         # return super(PacotePorUsuarioAdmin, self)\
                # .changelist_view(request, extra_context=extra_context)
