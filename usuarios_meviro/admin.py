@@ -77,17 +77,21 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	
 	change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
 	
-
-	def changelist_view(self, request, *args, **kwargs):
-		self.request = request
+	def changelist_view(self, request, extra_context=None):
 		print("eeeeeeitaaaaaa")
 		print(request.GET.get('code'))
+		return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
+	# def changelist_view(self, request, *args, **kwargs):
+	# 	# self.request = request
+	# 	print("eeeeeeitaaaaaa")
+	# 	# print(request.GET.get('code'))
 
 	def get_urls(self):
 	    urls = super().get_urls()
 	    my_urls = [
 	        path('sincronizar_pacotes_contaazul/', self.sincronizar_pacotes_contaazul),
 	    ]
+	    # print(request.GET.get('code'))
 	    return my_urls + urls
 
 	def sincronizar_pacotes_contaazul(self, request):
