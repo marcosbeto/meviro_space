@@ -269,6 +269,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	authorization = 'Basic %s' % encoded
     	headers={'Authorization': authorization}
     	post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario', 'code': '4fz1G4AooaXkR5DdH0oB3aTTQyNr3s9O'}
+    	print(headers)
     	response = requests.post('https://api.contaazul.com/oauth2/token', data=post_data, headers=headers)
     	content = response.content
     	print(content)
