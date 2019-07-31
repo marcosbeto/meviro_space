@@ -6,7 +6,7 @@
                 <button type="submit">Sincronizar com Conta Azul</button>
         </form>
         Code: {{code}}
-        <form action="admin/usuarios_meviro/pacoteporusuario/?code={{code}}" method="POST">
+        <form action="acessar_auth_token/?code=1234" method="POST">
             {% csrf_token %}
                 <button type="submit">AUTH Token</button>
         </form>
