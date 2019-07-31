@@ -216,7 +216,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	    urls = super().get_urls()
 	    my_urls = [
 	        path('sincronizar_pacotes_contaazul/', self.admin_site.admin_view(self.sincronizar_pacotes_contaazul), name='sincronizar_pacotes_contaazul'),
-	        path('/admin/usuarios_meviro/pacoteporusuario/', self.admin_site.admin_view(self.acessar_auth_token), name='acessar_auth_token'),
+	        path('acessar_auth_token/', self.admin_site.admin_view(self.acessar_auth_token), name='acessar_auth_token'),
 		]
 	    
 	    # print(request.GET.get('code'))
