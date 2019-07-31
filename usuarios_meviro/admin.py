@@ -78,15 +78,31 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
 	code = ""
 	search_fields = ['code','state']
+	other_search_fields = {}
 	
 	def changelist_view(self, request, extra_context=None):
-		print("eeeeeeitaaaaaa")
-		request.GET._mutable = True
 		self.code = request.GET.get('code')
-		print(self.code)
-		# request.GET.pop('code')
+		self.other_search_fields = {} 
 
-		extra_context = {'title': 'Lista de todos os usuários do espaço', 'code':self.code}
+		extra_context = {'title': 'Lista de todos os usuários do espaço', 'code':self.code}        
+        # we now need to remove the elements coming from the form
+        # and save in the other_search_fields dict but it's not allowed
+        # to do that in place so we need to temporary enable mutability ( I don't think     
+        # it will cause any complicance but maybe someone more exeprienced on how 
+        # QueryDict works could explain it better) 
+		request.GET._mutable=True
+        
+		for key in asf.fields.keys():
+			try:
+				temp = request.GET.pop(key)
+			except KeyError:
+				pass # there is no field of the form in the dict so we don't remove it
+			else:
+				if temp!=['']: #there is a field but it's empty so it's useless
+					self.other_search_fields[key] = temp 
+                
+		request.GET_mutable=False
+		
 		return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 	
 	# def changelist_view(self, request, *args, **kwargs):
