@@ -208,7 +208,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 
     advanced_search_form = ActiveFilterForm()
     change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
-    actions = ['sincronizar_pacotes_contaazul']
+    actions = ['sincronizar_pacotes_contaazul', 'acessar_auth_token']
 
     def get_urls(self):
 	    urls = super().get_urls()
@@ -245,7 +245,6 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
         return super(MyModelAdmin, self).lookup_allowed(lookup)
 
     def sincronizar_pacotes_contaazul(self, request):
-    	print("tamaquuiuuuu")
     	if request.method == 'GET':
     		client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
     		client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
@@ -253,10 +252,18 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     		endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
     		url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
     	return HttpResponseRedirect(url)
+   
+    def acessar_auth_token(self, request):
+    	post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario', 'code': '4fz1G4AooaXkR5DdH0oB3aTTQyNr3s9O'}
+    	response = requests.post('https://api.contaazul.com/oauth2/token', data=post_data)
+    	content = response.content
+    	extra_context = {'code': code, 'access_token': content}
+    	return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 
     def changelist_view(self, request, extra_context=None, **kwargs):
         self.other_search_fields = {} 
         code = request.GET.get('code')
+        access_token = request.GET.get('access_token')
         asf = self.advanced_search_form
         extra_context = {'asf':asf}
 
@@ -272,7 +279,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
                     self.other_search_fields[key] = temp 
 
         request.GET_mutable=False
-        extra_context = {'code': code}
+        extra_context = {'code': code, 'access_token': access_token}
         return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
         # return super(PacotePorUsuarioAdmin, self)\
                # .changelist_view(request, extra_context=extra_context)
