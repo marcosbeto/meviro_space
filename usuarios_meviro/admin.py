@@ -259,7 +259,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	response = requests.post('https://api.contaazul.com/oauth2/token', data=post_data)
     	content = response.content
     	print(content)
-    	extra_context = {'code': code, 'access_token': content}
+    	extra_context = {'access_token': content}
     	return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 
     def changelist_view(self, request, extra_context=None, **kwargs):
