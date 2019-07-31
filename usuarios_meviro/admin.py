@@ -279,8 +279,8 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
         self.other_search_fields = {} 
         print("AQUIIIIIII DE NOVO");
         code = request.GET.get('code')
-        if (code):
-        	print("Code")
+        
+
         access_token = request.GET.get('access_token')
         asf = self.advanced_search_form
         extra_context = {'asf':asf}
@@ -297,6 +297,10 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 
         request.GET_mutable=False
         extra_context = {'code': code, 'access_token': access_token} 
+        if (code):
+        	print("Code")
+        	acessar_auth_token()
+
         return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
         # return super(PacotePorUsuarioAdmin, self)\
                # .changelist_view(request, extra_context=extra_context)
