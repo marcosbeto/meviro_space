@@ -250,8 +250,8 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 
     def sincronizar_pacotes_contaazul(self, request):
     	if request.method == 'GET':
-    		client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
-    		client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
+    		client_id = 'marcos@meviro.org'
+    		client_key = 'orivem024'
     		state_code = 'orivem'
     		endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
     		url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
