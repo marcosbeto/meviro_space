@@ -3,14 +3,14 @@
     <div>
     	<form action="requisitar_autenticacao_inicial/" method="GET">
             {% csrf_token %}
-                <button type="submit">Requisitar TOKEN</button>
+                <button type="submit">Requisitar Token Inicial</button>
         </form>
         Code: {{code}}
         Token: {{messages.0}}
-        
+
         <form action="atualizar_token/" method="GET">
             {% csrf_token %}
-                <button type="submit">AUTH Token</button>
+                <button type="submit">Atualizar Token</button>
         </form>
         
         <!-- {{content}} -->
