@@ -17,6 +17,7 @@ import base64
 from django import forms
 
 from .models import UsuarioEspaco, Agendamento, PacotePorUsuario, CreditoPorUsuario
+from contaazul.admin import TokenAdmin
 
 
 class UsuarioEspacoAdmin(admin.ModelAdmin):
@@ -120,87 +121,6 @@ class AgendamentoAdmin(admin.ModelAdmin):
 		    }
 		return TemplateResponse(request, "admin/auth_contaazul.html", context)
 
-# 	def changelist_view(self, request, extra_context=None):
-# 		self.code = request.GET.get('code')
-# 		self.other_search_fields = {} 
-
-# 		# extra_context = {'title': 'Lista de todos os usuários do espaço'}        
-# 		# # we now need to remove the elements coming from the form
-#   #       # and save in the other_search_fields dict but it's not allowed
-#   #       # to do that in place so we need to temporary enable mutability ( I don't think     
-#   #       # it will cause any complicance but maybe someone more exeprienced on how 
-#   #       # QueryDict works could explain it better) 
-# 		# request.GET._mutable=True
-        
-# 		# for key in asf.fields.keys():
-# 		# 	try:
-# 		# 		temp = request.GET.pop(key)
-# 		# 	except KeyError:
-# 		# 		pass # there is no field of the form in the dict so we don't remove it
-# 		# 	else:
-# 		# 		if temp!=['']: #there is a field but it's empty so it's useless
-# 		# 			self.other_search_fields[key] = temp 
-                
-# 		# request.GET_mutable=False
-		
-# 		return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
-	
-# 	# def changelist_view(self, request, *args, **kwargs):
-# 	# 	# self.request = request
-# 	# 	print("eeeeeeitaaaaaa")
-# 	# 	# print(request.GET.get('code'))
-
-# 	def get_urls(self):
-# 	    urls = super().get_urls()
-# 	    my_urls = [
-# 	        path('syncronize_contaazul/', self.admin_site.admin_view(self.syncronize_contaazul), name='syncronize_contaazul'),
-# 		]
-	    
-# 	    # print(request.GET.get('code'))
-# 	    return my_urls + urls
-
-# 	def sincronizar_pacotes_contaazul(self, request):
-# 		print(request)
-# 		reader = codecs.getreader("utf-8")
-# 		if request.method == 'GET':
-# 			client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
-# 			client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
-# 			state_code = 'orivem'
-# 			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
-# 			url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
-# 		return HttpResponseRedirect(url)
-# 		# return super(UsuarioEspacoAdmin, self).changelist_view(request, extra_context=extra_context)
-
-
-# # you need a templatetag to rewrite the standard search_form tag because the default   
-# # templatetag to render the search form doesn't handle context so here it is:
-# # remember to put it inside a source file (in my case is custom_search_form.py) that  
-# # lives in project/myapp/templatetags otherwise will not be found by the template engine 
-
-# from django.contrib.admin.views.main import SEARCH_VAR
-
-# from django.template import Library
-
-# register = Library()
-
-# @register.inclusion_tag('admin/usuarios_meviro/pacoteporusuario/search_form.html', takes_context=True)
-# def advanced_search_form(context, cl):
-#     """
-#     Displays a search form for searching the list.
-#     """
-#     return {
-#         'asf' : context.get('asf'),
-#         'cl': cl,
-#         'show_result_count': cl.result_count != cl.full_result_count,
-#         'search_var': SEARCH_VAR
-#     }
-
-
-
-
-
-
-
 #####
 
 class ActiveFilterForm(forms.Form):
@@ -211,13 +131,12 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 
     advanced_search_form = ActiveFilterForm()
     change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
-    actions = ['sincronizar_pacotes_contaazul', 'acessar_auth_token']
+    actions = ['atualizar_token']
 
     def get_urls(self):
 	    urls = super().get_urls()
 	    my_urls = [
-	        path('sincronizar_pacotes_contaazul/', self.admin_site.admin_view(self.sincronizar_pacotes_contaazul), name='sincronizar_pacotes_contaazul'),
-	        path('acessar_auth_token/', self.admin_site.admin_view(self.acessar_auth_token), name='acessar_auth_token'),
+	        path('atualizar_token/', self.admin_site.admin_view(self.atualizar_token), name='atualizar_token'),
 		]
 	    
 	    # print(request.GET.get('code'))
@@ -247,61 +166,12 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
             return True
         return super(MyModelAdmin, self).lookup_allowed(lookup)
 
-    def sincronizar_pacotes_contaazul(self, request):
-    	if request.method == 'GET':
-    		client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
-    		state_code = 'orivem'
-    		endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
-    		url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
-    	return HttpResponseRedirect(url)
-   
-    def acessar_auth_token(self, request, code):
-    	client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
-    	client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
-    	to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
-    	encoded = base64.b64encode(to_encode.encode('ascii'))
-    	headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
-    	post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', 'code': code}
-    	response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
-    	# requests.request("POST", url, headers=headers, params=querystring)
-    	content = response.content
-    	print("CONTEEEEEENT")
-    	print(response.text)
-    	extra_context = {'access_token': '123'}
+    def atualizar_token(self, request):
+    	token = TokenAdmin.atualizar_token()
     	url = reverse('admin:%s_%s_changelist' % ('usuarios_meviro', 'pacoteporusuario'))
-    	messages.success(request, json.loads(content.decode("utf-8")))
+    	messages.success(request, 'Token atualizado: %s' % token)
     	return HttpResponseRedirect(url)
-    	# return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 
-    def changelist_view(self, request, extra_context=None, **kwargs):
-        self.other_search_fields = {} 
-        
-        code = request.GET.get('code')
-        access_token = request.GET.get('access_token')
-        refresh_token = request.GET.get('refresh_token')
-
-        asf = self.advanced_search_form
-        extra_context = {'asf':asf}
-
-        request.GET._mutable=True
-
-        for key in asf.fields.keys():
-            try:
-                temp = request.GET.pop(key)
-            except KeyError:
-                pass 
-            else:
-                if temp!=['']: 
-                    self.other_search_fields[key] = temp 
-
-        request.GET_mutable=False
-        extra_context = {'code': code, 'access_token': access_token, 'refresh_token': refresh_token} 
-
-        if (code):
-        	self.acessar_auth_token(request, code)
-
-        return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
-        
 
 #####
 
