@@ -101,7 +101,7 @@ class TokenAdmin(admin.ModelAdmin):
 		access_token = ['access_token']
 		refresh_token = ['refresh_token']
 
-		token_object = Token(access_token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.now)
+		token_object = Token(access_token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.now())
 		token_object.save()
 
 		print("CONTEEEEEENT")
