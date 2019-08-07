@@ -72,7 +72,7 @@ class TokenAdmin(admin.ModelAdmin):
 
 
 		current_refresh_token = Token.objects.filter(pk=1)
-		current_refresh_token_str = current_refresh_token.refresh_token
+		current_refresh_token_str = current_refresh_token
 
 
 		# post_data = {'grant_type': 'refresh_token', 'refresh_token': current_refresh_token}
