@@ -69,7 +69,7 @@ class TokenAdmin(admin.ModelAdmin):
 		to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
 		encoded = base64.b64encode(to_encode.encode('ascii'))
 		headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
-		post_data = {'grant_type': 'refresh_token', 'refresh_token': 'RcdwmiXK6uRXiTh6ZFWC66ZGswDFI2PN'}
+		post_data = {'grant_type': 'refresh_token', 'refresh_token': 'bn54v9fZ8lL9DgRdNRjasbfVwUYBGJLL'}
 		response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
 		# requests.request("POST", url, headers=headers, params=querystring)
 		content = response.content
@@ -77,9 +77,9 @@ class TokenAdmin(admin.ModelAdmin):
 
 		access_token = content_json['access_token']
 		refresh_token = content_json['refresh_token']
-
-		token_object = Token(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
-		token_object.save()
+		token_database = Token.objects.get(pk=1)
+		token_database.update(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
+		
 		print("CONTEEEEEENT")
 		print(response.text)
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
