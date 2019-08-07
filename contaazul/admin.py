@@ -35,7 +35,7 @@ class TokenAdmin(admin.ModelAdmin):
 		my_urls = [
 			path('requisitar_autenticacao_inicial/', self.admin_site.admin_view(self.requisitar_autenticacao_inicial), name='requisitar_autenticacao_inicial'),
 			path('acessar_auth_token/', self.admin_site.admin_view(self.acessar_auth_token), name='acessar_auth_token'),
-			path('atualizar_token/', self.admin_site.admin_view(self.atualizar_token), name='atualizar_token'),
+			path('atualizar_token/', self.admin_site.admin_view(self.action_atualizar_toke), name='atualizar_token'),
 		]
 	    
 		return my_urls + urls
@@ -63,6 +63,13 @@ class TokenAdmin(admin.ModelAdmin):
 			return True
 		return super(MyModelAdmin, self).lookup_allowed(lookup)
 
+	def action_atualizar_toke(self, request):
+		token = self.atualizar_token()
+		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
+		messages.success(request, 'Token atualizado: %s' % token)
+		return HttpResponseRedirect(url)
+
+
 	def atualizar_token(self, request):
 		client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE'
 		client_key = 'H3l6iIiNYgsYyjh6m5sWZ8WMoKL5rOBy'
@@ -83,9 +90,10 @@ class TokenAdmin(admin.ModelAdmin):
 		access_token = content_json['access_token']
 		refresh_token = content_json['refresh_token']
 		Token.objects.filter(pk=1).update(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
-		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
-		messages.success(request, 'Token atualizado: %s' % current_refresh_token_str)
-		return HttpResponseRedirect(url)
+		
+		return access_token
+
+		
 
 	def requisitar_autenticacao_inicial(self, request):
 		if request.method == 'GET':

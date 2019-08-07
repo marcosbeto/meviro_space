@@ -5,21 +5,16 @@
             {% csrf_token %}
                 <button type="submit">Requisitar Token Inicial</button>
         </form>
-        Code: {{code}}
-        Token: {{messages.0}}
-
         <form action="atualizar_token/" method="GET">
             {% csrf_token %}
                 <button type="submit">Atualizar Token</button>
         </form>
-        
-        <!-- {{content}} -->
     </div>
     {% if messages %}
     	{% for message in messages %}
 	        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}" role="alert">{{ message }}</div>
 	    {% endfor %}
 	{% endif %}
-    <br />
+    <br/>
     {{ block.super }}
 {% endblock %}
