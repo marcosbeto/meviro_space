@@ -71,7 +71,7 @@ class TokenAdmin(admin.ModelAdmin):
 		headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
 
 
-		current_refresh_token = Token.objects.filter(pk=1)
+		current_refresh_token = Token.objects.get(pk=1)
 		current_refresh_token_str = current_refresh_token.refresh_token
 
 
