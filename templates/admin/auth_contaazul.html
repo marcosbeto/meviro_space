@@ -1,0 +1,13 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_static admin_modify %}
+{% block content %}
+<div id="content-main">
+    <a href="https://api.contaazul.com/auth/authorize?redirect_uri=http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/&client_id=ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs&scope=sales&state=orivem"
+    <form action="sincronizar_pacotes_contaazul/" method="GET">
+        {% csrf_token %}
+            <button type="submit">Sincronizar com Conta Azul</button>
+    </form>
+    Code: {{code}}
+    
+</div>
+{% endblock %}
