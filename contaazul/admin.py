@@ -98,11 +98,11 @@ class TokenAdmin(admin.ModelAdmin):
 		# requests.request("POST", url, headers=headers, params=querystring)
 		content = response.content
 		content_json = json.loads(content.decode("utf-8"))
-		
-		access_token = content_json['refresh_token']
+
+		access_token = content_json['access_token']
 		refresh_token = content_json['refresh_token']
 
-		token_object = Token(access_token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
+		token_object = Token(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
 		token_object.save()
 
 		print("CONTEEEEEENT")
