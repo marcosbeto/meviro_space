@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'administrativo',
     'logs',
     # 'venda',
-    'api'    
+    'api',
+    'contaazul'    
 ]
 
 MIDDLEWARE = [
@@ -191,5 +192,6 @@ APP_ORDER = [
         'educacao',
         'logs',
         'api',
+        'contaazul'
     ]
     

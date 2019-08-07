@@ -230,11 +230,10 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
         # now we have the active_pp parameter that was passed in and can use it.
 
         class ActiveChangeList(ChangeList):
-
-            def get_query_set(self, *args, **kwargs):
-                now = datetime.datetime.now()
-                qs = super(ActiveChangeList, self).get_query_set(*args, **kwargs)
-                return qs.filter((Q(start_date=None) | Q(start_date__lte=now))
+        	def get_query_set(self, *args, **kwargs):
+        		now = datetime.datetime.now()
+        		qs = super(ActiveChangeList, self).get_query_set(*args, **kwargs)
+        		return qs.filter((Q(start_date=None) | Q(start_date__lte=now))
                                  & (Q(end_date=None) | Q(end_date__gte=now)))
 
         if not code is None:
@@ -251,7 +250,6 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     def sincronizar_pacotes_contaazul(self, request):
     	if request.method == 'GET':
     		client_id = 'ivs1DUEHnAPyjOPDNyyG2bQiTlrPSsgs'
-    		client_key = 'FIOme5ZCQrHycctbadpGKsCFhhanc0dv'
     		state_code = 'orivem'
     		endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
     		url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
@@ -277,13 +275,14 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 
     def changelist_view(self, request, extra_context=None, **kwargs):
         self.other_search_fields = {} 
-        print("AQUIIIIIII DE NOVO");
-        code = request.GET.get('code')
         
-
+        code = request.GET.get('code')
         access_token = request.GET.get('access_token')
+        refresh_token = request.GET.get('refresh_token')
+
         asf = self.advanced_search_form
         extra_context = {'asf':asf}
+
         request.GET._mutable=True
 
         for key in asf.fields.keys():
@@ -296,14 +295,13 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
                     self.other_search_fields[key] = temp 
 
         request.GET_mutable=False
-        extra_context = {'code': code, 'access_token': access_token} 
+        extra_context = {'code': code, 'access_token': access_token, 'refresh_token': refresh_token} 
+
         if (code):
-        	print("Code")
         	self.acessar_auth_token(request, code)
 
         return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
-        # return super(PacotePorUsuarioAdmin, self)\
-               # .changelist_view(request, extra_context=extra_context)
+        
 
 #####
 
