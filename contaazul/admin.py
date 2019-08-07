@@ -15,6 +15,7 @@ import json, codecs
 from django.shortcuts import render
 from django.contrib import messages
 import base64
+from .models import Token
 
 
 class ActiveFilterForm(forms.Form):
@@ -26,12 +27,12 @@ class TokenAdmin(admin.ModelAdmin):
 
 	advanced_search_form = ActiveFilterForm()
 	change_list_template = "admin/contaazul/token/change_list.html"
-	actions = ['sincronizar_pacotes_contaazul', 'acessar_auth_token', 'atualizar_token']
+	actions = ['requisitar_autenticacao_inicial', 'acessar_auth_token', 'atualizar_token']
 
 	def get_urls(self):
 		urls = super().get_urls()
 		my_urls = [
-			path('sincronizar_pacotes_contaazul/', self.admin_site.admin_view(self.sincronizar_pacotes_contaazul), name='sincronizar_pacotes_contaazul'),
+			path('requisitar_autenticacao_inicial/', self.admin_site.admin_view(self.requisitar_autenticacao_inicial), name='requisitar_autenticacao_inicial'),
 			path('acessar_auth_token/', self.admin_site.admin_view(self.acessar_auth_token), name='acessar_auth_token'),
 			path('atualizar_token/', self.admin_site.admin_view(self.atualizar_token), name='atualizar_token'),
 		]
@@ -77,7 +78,7 @@ class TokenAdmin(admin.ModelAdmin):
 		messages.success(request, json.loads(content.decode("utf-8")))
 		return HttpResponseRedirect(url)
 
-	def sincronizar_pacotes_contaazul(self, request):
+	def requisitar_autenticacao_inicial(self, request):
 		if request.method == 'GET':
 			client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE'
 			state_code = 'orivem'
@@ -95,11 +96,18 @@ class TokenAdmin(admin.ModelAdmin):
 		response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
 		# requests.request("POST", url, headers=headers, params=querystring)
 		content = response.content
+		content_json = json.loads(content.decode("utf-8"))
+		access_token = ['access_token']
+		refresh_token = ['refresh_token']
+
+		token_object = Token(access_token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.now)
+		token_object.save()
+
 		print("CONTEEEEEENT")
 		print(response.text)
 		extra_context = {'access_token': '123'}
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
-		messages.success(request, json.loads(content.decode("utf-8")))
+		messages.success(request, content_json)
 		return HttpResponseRedirect(url)
 		# return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 

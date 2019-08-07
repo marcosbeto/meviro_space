@@ -1,16 +1,18 @@
 {% extends "admin/change_list.html" %} {% load i18n %} 
 {% block object-tools %}
     <div>
-    	<form action="sincronizar_pacotes_contaazul/" method="GET">
+    	<form action="requisitar_autenticacao_inicial/" method="GET">
             {% csrf_token %}
                 <button type="submit">Requisitar TOKEN</button>
         </form>
         Code: {{code}}
+        Token: {{messages.0}}
+        
         <form action="atualizar_token/" method="GET">
             {% csrf_token %}
                 <button type="submit">AUTH Token</button>
         </form>
-        Token: {{messages.0}}
+        
         <!-- {{content}} -->
     </div>
     {% if messages %}
