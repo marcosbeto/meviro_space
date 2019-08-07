@@ -72,22 +72,23 @@ class TokenAdmin(admin.ModelAdmin):
 
 
 		current_refresh_token = Token.objects.filter(pk=1).values('refresh_token')
-
-
-		post_data = {'grant_type': 'refresh_token', 'refresh_token': current_refresh_token}
-		response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
-		# requests.request("POST", url, headers=headers, params=querystring)
-		content = response.content
-		content_json = json.loads(content.decode("utf-8"))
-
-		access_token = content_json['access_token']
-		refresh_token = content_json['refresh_token']
-		Token.objects.filter(pk=1).update(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
 		
-		print("CONTEEEEEENT")
-		print(response.text)
+
+
+		# post_data = {'grant_type': 'refresh_token', 'refresh_token': current_refresh_token}
+		# response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
+		# # requests.request("POST", url, headers=headers, params=querystring)
+		# content = response.content
+		# content_json = json.loads(content.decode("utf-8"))
+
+		# access_token = content_json['access_token']
+		# refresh_token = content_json['refresh_token']
+		# Token.objects.filter(pk=1).update(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
+		
+		# print("CONTEEEEEENT")
+		# print(response.text)
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
-		messages.success(request, json.loads(content.decode("utf-8")))
+		messages.success(request, current_refresh_token)
 		return HttpResponseRedirect(url)
 
 	def requisitar_autenticacao_inicial(self, request):
