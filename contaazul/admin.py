@@ -69,7 +69,7 @@ class TokenAdmin(admin.ModelAdmin):
 		to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
 		encoded = base64.b64encode(to_encode.encode('ascii'))
 		headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
-		post_data = {'grant_type': 'refresh_token', 'refresh_token': 'dvxVtETUMMtX0SWC7t6OtvaUb0BPLD3t'}
+		post_data = {'grant_type': 'refresh_token', 'refresh_token': 'ONaPZfmgcpI9qgcPMRBBW6LgBxqWDLZl'}
 		response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
 		# requests.request("POST", url, headers=headers, params=querystring)
 		content = response.content
