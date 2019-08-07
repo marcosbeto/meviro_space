@@ -71,8 +71,8 @@ class TokenAdmin(admin.ModelAdmin):
 		headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
 
 
-		current_refresh_token = Token.objects.filter(pk=1).values('refresh_token')
-		
+		current_refresh_token = Token.objects.filter(pk=1)
+		current_refresh_token_str = current_refresh_token.refresh_token
 
 
 		# post_data = {'grant_type': 'refresh_token', 'refresh_token': current_refresh_token}
@@ -88,7 +88,7 @@ class TokenAdmin(admin.ModelAdmin):
 		# print("CONTEEEEEENT")
 		# print(response.text)
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
-		messages.success(request, current_refresh_token)
+		messages.success(request, current_refresh_token_str)
 		return HttpResponseRedirect(url)
 
 	def requisitar_autenticacao_inicial(self, request):
