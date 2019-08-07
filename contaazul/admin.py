@@ -65,7 +65,7 @@ class TokenAdmin(admin.ModelAdmin):
 			client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE'
 			state_code = 'orivem'
 			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
-			url = endpoint.format(REDIRECT_URI='http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', CLIENT_ID=client_id, STATE=state_code)
+			url = endpoint.format(REDIRECT_URI='https://mevirospace.herokuapp.com/admin/contaazul/token/', CLIENT_ID=client_id, STATE=state_code)
 		return HttpResponseRedirect(url)
 
 	def acessar_auth_token(self, request, code):
@@ -74,7 +74,7 @@ class TokenAdmin(admin.ModelAdmin):
 		to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
 		encoded = base64.b64encode(to_encode.encode('ascii'))
 		headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
-		post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'http://mevirospace.herokuapp.com/admin/usuarios_meviro/pacoteporusuario/', 'code': code}
+		post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'https://mevirospace.herokuapp.com/admin/contaazul/token/', 'code': code}
 		response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
 		# requests.request("POST", url, headers=headers, params=querystring)
 		content = response.content
