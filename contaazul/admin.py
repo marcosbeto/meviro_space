@@ -69,16 +69,15 @@ class TokenAdmin(admin.ModelAdmin):
 		to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
 		encoded = base64.b64encode(to_encode.encode('ascii'))
 		headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
-		post_data = {'grant_type': 'refresh_token', 'refresh_token': 'bn54v9fZ8lL9DgRdNRjasbfVwUYBGJLL'}
+		post_data = {'grant_type': 'refresh_token', 'refresh_token': 'kVGSQTSWoA3y7wirXmTNA7SafvPDvGXe'}
 		response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
 		# requests.request("POST", url, headers=headers, params=querystring)
 		content = response.content
 		content_json = json.loads(content.decode("utf-8"))
 
-		# access_token = content_json['access_token']
-		# refresh_token = content_json['refresh_token']
-		# Token.objects.filter(pk=1).update(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
-		
+		access_token = content_json['access_token']
+		refresh_token = content_json['refresh_token']
+		Token.objects.filter(pk=1).update(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
 		print("CONTEEEEEENT")
 		print(response.text)
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
