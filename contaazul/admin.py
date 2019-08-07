@@ -77,8 +77,7 @@ class TokenAdmin(admin.ModelAdmin):
 
 		access_token = content_json['access_token']
 		refresh_token = content_json['refresh_token']
-		token_database = Token.objects.get(pk=1)
-		token_database.update(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
+		Token.objects.filter(pk=1).update(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
 		
 		print("CONTEEEEEENT")
 		print(response.text)
