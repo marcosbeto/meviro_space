@@ -142,30 +142,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	    # print(request.GET.get('code'))
 	    return my_urls + urls
 
-    def get_changelist(self, request, **kwargs):
-
-        from django.contrib.admin.views.main import ChangeList
-        code = self.other_search_fields.get('code',None)
-        # now we have the active_pp parameter that was passed in and can use it.
-
-        class ActiveChangeList(ChangeList):
-        	def get_query_set(self, *args, **kwargs):
-        		now = datetime.datetime.now()
-        		qs = super(ActiveChangeList, self).get_query_set(*args, **kwargs)
-        		return qs.filter((Q(start_date=None) | Q(start_date__lte=now))
-                                 & (Q(end_date=None) | Q(end_date__gte=now)))
-
-        if not code is None:
-            return ActiveChangeList
-
-        return ChangeList
-
-
-    def lookup_allowed(self, lookup):
-        if lookup in self.advanced_search_form.fields.keys():
-            return True
-        return super(MyModelAdmin, self).lookup_allowed(lookup)
-
+   
     def atualizar_token(self, request):
     	token = TokenAdmin.atualizar_token()
     	url = reverse('admin:%s_%s_changelist' % ('usuarios_meviro', 'pacoteporusuario'))
