@@ -48,6 +48,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 			_mutable = form.data._mutable
 			form.data._mutable = True
 			form.data['id_contaazul'] = id_contaazul
+			obj.id_contaazul = id_contaazul
 			form.data._mutable = _mutable
 			messages.success(request, "Inserindo novo %s" % content)
 
