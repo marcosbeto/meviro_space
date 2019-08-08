@@ -36,7 +36,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
 		post_data = {"name": "felipe", "person_type":"NATURAL"}
 		
-		response = requests.request(method="POST", url="https://api.contaazul.com/v1/customers", params=json.dumps(post_data), headers=headers)
+		response = requests.request(method="POST", url="https://api.contaazul.com/v1/customers", data=json.dumps(post_data), headers=headers)
 		content = response.content	
 
 		messages.success(request, content)
