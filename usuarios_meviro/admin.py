@@ -34,7 +34,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		token = TokenAdmin.atualizar_token(None)
 
 		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
-		post_data = {"name": "felipe", "person_type":"NATURAL"}
+		post_data = {"name": form.data['primeiro_nome'], "person_type":"NATURAL"}
 		
 		response = requests.request(method="POST", url="https://api.contaazul.com/v1/customers", data=json.dumps(post_data), headers=headers)
 		content = response.content	
