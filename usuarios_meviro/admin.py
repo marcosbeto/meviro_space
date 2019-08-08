@@ -39,7 +39,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		response = requests.request("POST", 'https://api.contaazul.com/v1/customers/', params=post_data, headers=headers)
 		content = response
 
-		messages.success(request, content)
+		messages.success(request, response)
 		super(UsuarioEspacoAdmin, self).save_model(request, obj, form, change)
 	
 	def changelist_view(self, request, extra_context=None):
