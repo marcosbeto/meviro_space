@@ -149,7 +149,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 
    
     def atualizar_token(self, request):
-    	token = TokenAdmin.atualizar_token()
+    	token = TokenAdmin.atualizar_token(None)
     	url = reverse('admin:%s_%s_changelist' % ('usuarios_meviro', 'pacoteporusuario'))
     	messages.success(request, 'Token atualizado: %s' % token)
     	return HttpResponseRedirect(url)
