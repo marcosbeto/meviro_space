@@ -37,7 +37,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		post_data = {"name": form.data['primeiro_nome'], "person_type":"NATURAL"}
 		
 		if form.data['id_contaazul']:
-			response = requests.request(method="POST", url="https://api.contaazul.com/v1/customers/%s" % form.data['id'], data=json.dumps(post_data), headers=headers)
+			response = requests.request(method="POST", url="https://api.contaazul.com/v1/customers/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
 			content = response.content
 			messages.success(request, "Atualizando %s" % content)
 		else:
