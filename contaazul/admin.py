@@ -70,7 +70,7 @@ class TokenAdmin(admin.ModelAdmin):
 		return HttpResponseRedirect(url)
 
 
-	def atualizar_token(self):
+	def atualizar_token():
 		client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE'
 		client_key = 'H3l6iIiNYgsYyjh6m5sWZ8WMoKL5rOBy'
 		to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
