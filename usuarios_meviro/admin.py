@@ -37,7 +37,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		post_data = {'name': form.data['primeiro_nome'], 'person_type':'NATURAL'}
 		
 		response = requests.request(method="POST", url="https://api.contaazul.com/v1/customers/", params=post_data, headers=headers)
-		content = response.status_code	
+		content = response.content	
 
 		messages.success(request, content)
 		super(UsuarioEspacoAdmin, self).save_model(request, obj, form, change)
