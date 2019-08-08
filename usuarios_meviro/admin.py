@@ -33,11 +33,13 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		print(form.data['primeiro_nome'])
 		token = TokenAdmin.atualizar_token(None)
 
-		headers={'Authorization': 'Basic %s' % token}
+		headers={'Authorization': 'Bearer %s' % token}
 		post_data = {'name': form.data['primeiro_nome']}
+		
 		response = requests.request("POST", 'https://api.contaazul.com/v1/customers/', params=post_data, headers=headers)
 		content = response.content
-		messages.success(request, token)
+
+		messages.success(request, content)
 		super(UsuarioEspacoAdmin, self).save_model(request, obj, form, change)
 	
 	def changelist_view(self, request, extra_context=None):
