@@ -44,7 +44,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 			response = requests.request(method="POST", url="https://api.contaazul.com/v1/customers", data=json.dumps(post_data), headers=headers)
 			content = response.content
 			content_json = json.loads(content.decode("utf-8"))
-			id_contaazul = content_json['id_contaazul']
+			id_contaazul = content_json['id']
 			form.data['id_contaazul'] = id_contaazul
 			messages.success(request, "Inserindo novo %s" % content)
 
