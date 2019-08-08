@@ -33,7 +33,9 @@ class UsuarioEspaco(models.Model):
 	
 	tem_plano_saude = models.BooleanField(default=False, verbose_name="Usuário possui plano de saúde")
 	nome_plano_saude = models.CharField(max_length=50, blank=True, null=True, verbose_name="Qual o nome do plano de saúde?")
-	
+	id_contaazul = models.CharField(max_length=200, blank=True, null=True, verbose_name="ID Conta Azul")
+
+
 	def restart_button(self):
 		return mark_safe("<a href='record_rfid/" + str(self.id) + "/' style='background-color: #ffcd00;padding: 4px 8px;color: #333333;border-radius: 2px;font-weight: bold;font-size: 10pt;'>Enviar comando</a>")
     
