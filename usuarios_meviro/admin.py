@@ -45,7 +45,10 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 			content = response.content
 			content_json = json.loads(content.decode("utf-8"))
 			id_contaazul = content_json['id']
+			_mutable = form.data._mutable
+			form.data._mutable = True
 			form.data['id_contaazul'] = id_contaazul
+			form.data._mutable = _mutable
 			messages.success(request, "Inserindo novo %s" % content)
 
 		super(UsuarioEspacoAdmin, self).save_model(request, obj, form, change)
