@@ -33,7 +33,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		print(form.data['primeiro_nome'])
 		token = TokenAdmin.atualizar_token(None)
 
-		headers={'Authorization': 'Basic %s' % token.decode("utf-8")}
+		headers={'Authorization': 'Basic %s' % token}
 		post_data = {'name': form.data['primeiro_nome']}
 		response = requests.request("POST", 'https://api.contaazul.com/v1/customers/', params=post_data, headers=headers)
 		content = response.content
