@@ -27,6 +27,11 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 	actions = ['record_rfid']
 	search_fields = ['primeiro_nome', 'sobrenome', 'email']
 	filter_horizontal = ('treinamentoEmEquipamentos', )
+
+	def save_model(self, request, obj, form, change):
+		print("form")
+		print(form.data['primeiro_nome'])
+		super(UsuarioEspacoAdmin, self).save_model(request, obj, form, change)
 	
 	def changelist_view(self, request, extra_context=None):
 		extra_context = {'title': 'Lista de todos os usuários do espaço'}
