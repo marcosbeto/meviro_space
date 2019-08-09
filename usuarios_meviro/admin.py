@@ -74,7 +74,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 			response_sale = requests.request(method="GET", url="https://api.contaazul.com/v1/sales/%s/items" % sale['id'], params=params_sale, headers=headers)
 			content_sale = response_sale.content
 			content_sale_json = json.loads(content_sale.decode("utf-8"))
-			message = message + content_sale_json['item']
+			message = message + content_sale_json.0
 		
 		messages.success(request, "Lista %s" % message)
 
