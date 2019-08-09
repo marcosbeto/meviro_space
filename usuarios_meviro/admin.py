@@ -69,10 +69,10 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		content_json = json.loads(content.decode("utf-8"))
 		message = ""
 		for sale in content_json:
-			message = message + sale.id
+			message = message + sale['id']
 		
 		messages.success(request, "Lista %s" % message)
-		
+
 		url_base = reverse('admin:usuarios_meviro_usuarioespaco_changelist',)
 		return HttpResponseRedirect(url_base);
 
