@@ -34,7 +34,7 @@ class PacoteAdmin(admin.ModelAdmin):
 		token = TokenAdmin.atualizar_token(None)
 
 		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
-		post_data = { "name": form.data['nome'], "value": form.data['valor_venda'], "cost": form.data['valor_custo'] }
+		post_data = {"name": form.data['nome'], "value": form.data['valor_venda'], "cost": form.data['valor_custo'], "code": form.data['codigo']}
 
 		if form.data['id_contaazul']:
 			response = requests.request(method="PUT", url="https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
