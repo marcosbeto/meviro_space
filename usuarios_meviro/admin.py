@@ -66,7 +66,13 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		params = {"customer_id": id_contaazul, "status": "COMMITTED"}
 		response = requests.request(method="GET", url="https://api.contaazul.com/v1/sales", params=params, headers=headers)
 		content = response.content
-		messages.success(request, "Lista %s" % content)
+		content_json = json.loads(content.decode("utf-8"))
+		message = ""
+		for sale in content_json:
+			message = message + sale.id
+		
+		messages.success(request, "Lista %s" % message)
+		
 		url_base = reverse('admin:usuarios_meviro_usuarioespaco_changelist',)
 		return HttpResponseRedirect(url_base);
 
