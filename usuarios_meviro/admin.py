@@ -69,7 +69,12 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		content_json = json.loads(content.decode("utf-8"))
 		message = ""
 		for sale in content_json:
-			message = message + sale['id']
+			
+			params_sale = {"id": sale['id']}
+			response_sale = requests.request(method="GET", url="https://api.contaazul.com/v1/sales/%s/items" % sale['id'], params=params_sale, headers=headers)
+			content_sale = response_sale.content
+			content_sale_json = json.loads(content_sale.decode("utf-8"))
+			message = message + content_sale_json['item']['id']
 		
 		messages.success(request, "Lista %s" % message)
 
