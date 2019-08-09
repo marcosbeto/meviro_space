@@ -1,4 +1,19 @@
 from django.contrib import admin
+import requests
+from django.urls import include, path
+from django.conf.urls import url
+from django.utils.html import format_html
+from django.urls import reverse
+from django.http import HttpResponseRedirect
+from django.template.response import TemplateResponse
+from django.http import HttpResponseRedirect
+from django.contrib import messages
+import json, codecs
+from django.shortcuts import render
+from django.contrib import messages
+import base64
+
+from django import forms
 from .models import Pacote, Contrato, PeriodosReservaRecurso, Regra
 from contaazul.admin import TokenAdmin
 
