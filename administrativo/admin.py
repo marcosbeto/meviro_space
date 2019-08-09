@@ -12,7 +12,31 @@ from .models import Pacote, Contrato, PeriodosReservaRecurso, Regra
 class PacoteAdmin(admin.ModelAdmin):
 	search_fields = ['nome']
 	filter_horizontal = ('regra', 'contrato', 'curso','outraAtividade')
-    # list_display = ('nome', 'descricao', 'data_', 'data_implantacao')
+    
+	def save_model(self, request, obj, form, change):
+		
+		token = TokenAdmin.atualizar_token(None)
+
+		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
+		post_data = { "name": form.data['nome'], "value": form.data['valor_venda'], "cost": form.data['valor_custo'] }
+
+		if form.data['id_contaazul']:
+			response = requests.request(method="PUT", url="https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
+			content = response.content
+			messages.success(request, "Atualizando pacote: %s" % content)
+		else:
+			response = requests.request(method="POST", url="https://api.contaazul.com/v1/services", data=json.dumps(post_data), headers=headers)
+			content = response.content
+			content_json = json.loads(content.decode("utf-8"))
+			id_contaazul = content_json['id']
+			_mutable = form.data._mutable
+			form.data._mutable = True
+			form.data['id_contaazul'] = id_contaazul
+			obj.id_contaazul = id_contaazul
+			form.data._mutable = _mutable
+			messages.success(request, "Inserindo novo pacote: %s" % content)
+
+		super(PacoteAdmin, self).save_model(request, obj, form, change)
 
 class RegraAdmin(admin.ModelAdmin):
     filter_horizontal = ('recurso', 'periodosReservaRecurso')

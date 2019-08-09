@@ -58,14 +58,15 @@ class OutrosProdutos(models.Model):
 
 class Pacote(models.Model):
 	nome = models.CharField(max_length=60, verbose_name="Nome do Pacote", help_text="Pacote de Assinaturas, Cursos ou Outras Atividades.")
+	valor_venda = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Valor de Venda")
+	valor_custo = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Valor de Custo")
+	codigo = models.CharField(max_length=50, blank=True, null=True, verbose_name="Código", default="PACOTE_MV_ADMIN")	
+
 	descricao = models.TextField(verbose_name="Descrição do Pacote", null=True)
 	data_implantacao = models.DateField(verbose_name="Data da Implantação", null=True)
 	ultima_atualizacao =  models.DateField(blank=True, verbose_name="Data da Última Atualização", null=True)
 	
 	regra = models.ManyToManyField(Regra, verbose_name="Regras para utilização de recursos")
-
-	valor_recorrente = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, verbose_name="Valor para cobrança recorrente")
-	valor_unico = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, verbose_name="Valor para cobrança única")
 	numero_credito = models.IntegerField(blank=True, null=True, verbose_name="Número de créditos disponíveis")
 
 	tipo_periodo_minimo = models.CharField(max_length=256, null=True, verbose_name="Período Mínimo", help_text="Dias, Semanas, Meses", blank=True, choices=[('Horas', 'horas'), ('Dias', 'dias'), ('Semanas', 'semanas'), ('Meses', 'meses')])
@@ -81,6 +82,8 @@ class Pacote(models.Model):
 	contrato = models.ManyToManyField(Contrato, verbose_name="Contratos", blank=True)
 	curso = models.ManyToManyField(Curso, verbose_name="Algum curso relacionado?", blank=True)
 	outraAtividade = models.ManyToManyField(OutraAtividade, verbose_name="Alguma outra atividade relacionada?", blank=True)
+	id_contaazul = models.CharField(max_length=200, blank=True, null=True, verbose_name="ID Conta Azul")
+	
 
 	def __str__(self):
 		return u'%s' % (self.nome)
