@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Pacote, Contrato, PeriodosReservaRecurso, Regra
+from contaazul.admin import TokenAdmin
 
 # class TipoAssinaturaAdmin(admin.ModelAdmin):
 #     list_display = ('nome', 'periodo')
