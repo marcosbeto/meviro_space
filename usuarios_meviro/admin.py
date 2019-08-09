@@ -75,7 +75,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 			content_sale = response_sale.content
 			content_sale_json = json.loads(content_sale.decode("utf-8"))
 			for item in content_sale_json:
-				message = message + item
+				message = message + json.dumps(item)
 		
 		messages.success(request, "Lista %s" % message)
 
