@@ -64,7 +64,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 
 		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
 		params = {"customer_id": id_contaazul, "status": "COMMITTED"}
-		response = requests.request(method="GET", url="https://api.contaazul.com/v1/sales", params=json.dumps(params), headers=headers)
+		response = requests.request(method="GET", url="https://api.contaazul.com/v1/sales", params=params, headers=headers)
 		content = response.content
 		messages.success(request, "Lista %s" % content)
 		url_base = reverse('admin:usuarios_meviro_usuarioespaco_changelist',)
