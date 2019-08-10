@@ -214,38 +214,38 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	url = reverse('admin:%s_%s_changelist' % ('usuarios_meviro', 'pacoteporusuario'))
     	return HttpResponseRedirect(url)
 
-    def changelist_view(self, request, extra_context=None):
+    # def changelist_view(self, request, extra_context=None):
 	    
-	    self.other_search_fields = {} 
+	   #  self.other_search_fields = {} 
 	    
-	    code = request.GET.get('code')
-	    access_token = request.GET.get('access_token')
-	    refresh_token = request.GET.get('refresh_token')
+	   #  code = request.GET.get('code')
+	   #  access_token = request.GET.get('access_token')
+	   #  refresh_token = request.GET.get('refresh_token')
 
-	    asf = self.advanced_search_form
-	    extra_context = {'asf':asf}
+	   #  asf = self.advanced_search_form
+	   #  extra_context = {'asf':asf}
 
-	    request.GET._mutable=True
+	   #  request.GET._mutable=True
 
-	    for key in asf.fields.keys():
-	        try:
-	            temp = request.GET.pop(key)
-	        except KeyError:
-	            pass 
-	        else:
-	            if temp!=['']: 
-	                self.other_search_fields[key] = temp 
+	   #  for key in asf.fields.keys():
+	   #      try:
+	   #          temp = request.GET.pop(key)
+	   #      except KeyError:
+	   #          pass 
+	   #      else:
+	   #          if temp!=['']: 
+	   #              self.other_search_fields[key] = temp 
 
-	    request.GET_mutable=False
-	    extra_context = {'code': code, 'access_token': access_token, 'refresh_token': refresh_token} 
+	   #  request.GET_mutable=False
+	   #  extra_context = {'code': code, 'access_token': access_token, 'refresh_token': refresh_token} 
 
-	    if (code):
-	    	self.acessar_auth_token(request, code)
+	   #  if (code):
+	   #  	self.acessar_auth_token(request, code)
 
-	    print("REQUEST:")
-	    print(request)
+	   #  print("REQUEST:")
+	   #  print(request)
 
-	    return super(TokenAdmin, self).changelist_view(request, extra_context=extra_context)
+	   #  return super(TokenAdmin, self).changelist_view(request, extra_context=extra_context)
 
 
 #####
