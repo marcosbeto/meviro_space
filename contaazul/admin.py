@@ -28,24 +28,24 @@ class TokenAdmin(admin.ModelAdmin):
 
 	advanced_search_form = ActiveFilterForm()
 	change_list_template = "admin/contaazul/token/change_list.html"
-	actions = ['requisitar_autenticacao_inicial', 'acessar_auth_token', 'atualizar_token']
+	actions = ['requisitar_autenticacao_inicial', 'atualizar_token']
 
 	def get_urls(self):
 		urls = super().get_urls()
 		my_urls = [
 			path('requisitar_autenticacao_inicial/', self.admin_site.admin_view(self.requisitar_autenticacao_inicial), name='requisitar_autenticacao_inicial'),
-			path('acessar_auth_token/', self.admin_site.admin_view(self.acessar_auth_token), name='acessar_auth_token'),
-			path('atualizar_token/', self.admin_site.admin_view(self.action_atualizar_toke), name='atualizar_token'),
+			path('atualizar_token/', self.admin_site.admin_view(self.action_atualizar_token), name='atualizar_token'),
 		]
 	    
 		return my_urls + urls
+
+	#BEGIN: Metodos para tratamento de requisições
 
 	def get_changelist(self, request, **kwargs):
 
 	    from django.contrib.admin.views.main import ChangeList
 	    code = self.other_search_fields.get('code',None)
-	    # now we have the active_pp parameter that was passed in and can use it.
-
+	    
 	    class ActiveChangeList(ChangeList):
 	    	def get_query_set(self, *args, **kwargs):
 	    		now = datetime.datetime.now()
@@ -63,39 +63,46 @@ class TokenAdmin(admin.ModelAdmin):
 			return True
 		return super(MyModelAdmin, self).lookup_allowed(lookup)
 
-	def action_atualizar_toke(self, request):
+	#END: Metodos para tratamento de requisições
+
+
+	def action_atualizar_token(self, request):
+		#TODO: tratar excessões
 		token = self.atualizar_token()
-		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
 		messages.success(request, 'Token atualizado: %s' % token)
+		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
 		return HttpResponseRedirect(url)
 
 
 	def atualizar_token(self):
-		client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE'
-		client_key = 'H3l6iIiNYgsYyjh6m5sWZ8WMoKL5rOBy'
-		to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
-		encoded = base64.b64encode(to_encode.encode('ascii'))
-		headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
+		#TODO: tratar excessões
+		client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE' #TODO: colocar variaveis globais nos settings
+		client_key = 'H3l6iIiNYgsYyjh6m5sWZ8WMoKL5rOBy' #TODO: colocar variaveis globais nos settings
+		
+		authorization_str = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
+		authorization_str_encoded = base64.b64encode(authorization_str.encode('ascii'))
+		headers={'Authorization': 'Basic %s' % authorization_str_encoded.decode("utf-8")}
 
+		#TODO: melhorar modelo de atualizacao
+		token_obj = Token.objects.get(pk=1)
+		current_refresh_token = token_obj.refresh_token
+		post_data = {'grant_type': 'refresh_token', 'refresh_token': current_refresh_token}
 
-		current_refresh_token = Token.objects.get(pk=1)
-		current_refresh_token_str = current_refresh_token.refresh_token
-
-
-		post_data = {'grant_type': 'refresh_token', 'refresh_token': current_refresh_token_str}
 		response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
-		content = response.content
-		content_json = json.loads(content.decode("utf-8"))
+		token_content = response.content
 
-		access_token = content_json['access_token']
-		refresh_token = content_json['refresh_token']
+		token_content_json = json.loads(token_content.decode("utf-8"))
+
+		access_token = token_content_json['access_token']
+		refresh_token = token_content_json['refresh_token']
+		
+		#TODO: tratar exececoes
 		Token.objects.filter(pk=1).update(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
 		
 		return access_token
 
-		
-
 	def requisitar_autenticacao_inicial(self, request):
+		#TODO: tratar excessões
 		if request.method == 'GET':
 			client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE'
 			state_code = 'orivem'
@@ -104,30 +111,34 @@ class TokenAdmin(admin.ModelAdmin):
 		return HttpResponseRedirect(url)
 
 	def acessar_auth_token(self, request, code):
-		client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE'
+		#TODO: tratar excessões
+
+		#BEGIN: PARTE REPLICADA EM OUTRO METODO
+		client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE' #TODO: colocar no global
 		client_key = 'H3l6iIiNYgsYyjh6m5sWZ8WMoKL5rOBy'
 		to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
 		encoded = base64.b64encode(to_encode.encode('ascii'))
 		headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
+		#END: PARTE REPLICADA EM OUTRO METODO
+
 		post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'https://mevirospace.herokuapp.com/admin/contaazul/token/', 'code': code}
+		
+		#TODO: colocar requisicoes ao Conta Azul em outro metodo
 		response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
-		# requests.request("POST", url, headers=headers, params=querystring)
-		content = response.content
-		content_json = json.loads(content.decode("utf-8"))
+		
+		authorization_content = response.content
+		authorization_content_json = json.loads(authorization_content.decode("utf-8"))
 
-		access_token = content_json['access_token']
-		refresh_token = content_json['refresh_token']
+		access_token = authorization_content_json['access_token']
+		refresh_token = authorization_content_json['refresh_token']
 
+		#TODO: tratar excessões
 		token_object = Token(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
 		token_object.save()
-
-		print("CONTEEEEEENT")
-		print(response.text)
-		extra_context = {'access_token': '123'}
+		messages.success(request, authorization_content_json)
+		
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
-		messages.success(request, content_json)
 		return HttpResponseRedirect(url)
-		# return super(PacotePorUsuarioAdmin, self).changelist_view(request, extra_context=extra_context)
 
 	def changelist_view(self, request, extra_context=None):
 	    self.other_search_fields = {} 
@@ -156,11 +167,7 @@ class TokenAdmin(admin.ModelAdmin):
 	    if (code):
 	    	self.acessar_auth_token(request, code)
 
-	    print("REQUEST:")
-	    print(request)
-
 	    return super(TokenAdmin, self).changelist_view(request, extra_context=extra_context)
 	    
-    # list_display = ('nome', 'descricao', 'data_', 'data_implantacao')
 
 admin.site.register(Token, TokenAdmin)
