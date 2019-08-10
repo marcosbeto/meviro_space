@@ -173,7 +173,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     	
     	for id_pacote_por_usuario in array_id_pacotes_por_usuario:
     		usuario_espaco = UsuarioEspaco.objects.filter(id_contaazul=id_contaazul)
-    		pacote = Pacote.objectes.filter(id_contaazul=id_pacote_por_usuario)
+    		pacote = Pacote.objects.filter(id_contaazul=id_pacote_por_usuario)
     		pacote_por_usuario_database = PacotePorUsuario.objects.filter(usuario=usuario_espaco, pacote=pacote, id_venda=id_venda)
     		if not pacote_por_usuario_database.exists():
     			pacote_por_usuario = PacotePorUsuario(usuario=usuario_espaco,pacote=pacote,ativo=False,data_ativacao=None,data_encerramento=None,id_venda=id_venda)
