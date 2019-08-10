@@ -72,8 +72,8 @@ class CreditoPorUsuario(models.Model):
 	usuario = models.ForeignKey(UsuarioEspaco, on_delete=models.DO_NOTHING, verbose_name="Nome do Usuário")
 	numero_creditos = models.ForeignKey(Pacote, on_delete=models.DO_NOTHING, verbose_name="Pacote")
 	is_active = models.BooleanField(default=False, verbose_name="Este plano está ativo?")
-	data_compra = models.DateField(verbose_name="Data de Ativação")
-	data_encerramento = models.DateField(verbose_name="Data de Encerramento")
+	data_compra = models.DateField(blank=True, null=True, verbose_name="Data de Ativação")
+	data_encerramento = models.DateField(blank=True, null=True, verbose_name="Data de Encerramento")
 	id_venda_contaazul = models.CharField(max_length=100, blank=True, null=True, verbose_name="ID Venda ContaAzul")
 
 	class Meta:
