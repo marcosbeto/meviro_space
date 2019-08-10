@@ -65,7 +65,7 @@ class PacotePorUsuario(models.Model):
 	id_venda_contaazul = models.CharField(max_length=100, blank=True, null=True, verbose_name="ID Venda ContaAzul")
 
 	def __str__(self):
-		return u'%s %s' % (self.usuario.nome, self.pacote.nome)
+		return u'%s %s' % (self.usuario.primeiro_nome, self.pacote.nome)
 
 	class Meta:
 		verbose_name_plural = "Pacotes por Usuário"
