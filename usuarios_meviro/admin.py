@@ -35,20 +35,23 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 	
 
 	def save_model(self, request, obj, form, change):
-		print("form")
-		print(form.data['primeiro_nome'])
+		#TODO: tratar excecoes
 		token = TokenAdmin.atualizar_token(None)
 
 		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
 		post_data = {"name": form.data['primeiro_nome'], "person_type":"NATURAL"}
 		
 		if form.data['id_contaazul']:
+			#TODO: Colocar requests do conta AZUL em outro metodo (/contaazul)
 			response = requests.request(method="PUT", url="https://api.contaazul.com/v1/customers/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
 			content = response.content
+			#TODO: tratar excecoes
 			messages.success(request, "Atualizando %s" % content)
 		else:
+			#TODO: Colocar requests do conta AZUL em outro metodo (/contaazul)
 			response = requests.request(method="POST", url="https://api.contaazul.com/v1/customers", data=json.dumps(post_data), headers=headers)
 			content = response.content
+			#TODO: tratar excecoes
 			content_json = json.loads(content.decode("utf-8"))
 			id_contaazul = content_json['id']
 			_mutable = form.data._mutable
@@ -56,6 +59,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 			form.data['id_contaazul'] = id_contaazul
 			obj.id_contaazul = id_contaazul
 			form.data._mutable = _mutable
+			#TODO: melhorar modelo de mensagens de resposta e excecoes
 			messages.success(request, "Inserindo novo %s" % content)
 
 		super(UsuarioEspacoAdmin, self).save_model(request, obj, form, change)
