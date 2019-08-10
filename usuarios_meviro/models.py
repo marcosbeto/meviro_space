@@ -58,12 +58,11 @@ class UsuarioEspaco(models.Model):
 
 class PacotePorUsuario(models.Model):
 	usuario = models.ForeignKey(UsuarioEspaco, on_delete=models.DO_NOTHING, verbose_name="Nome do Usuário")
-	# pacotes = models.ManyToManyField(Pacote, verbose_name="Pacotes contratados pelo Usuário")
 	pacote = models.ForeignKey(Pacote, on_delete=models.DO_NOTHING, verbose_name="Pacote")
 	ativo = models.BooleanField(default=False, verbose_name="Este plano está ativo?")
 	data_ativacao = models.DateField(verbose_name="Data de Ativação")
 	data_encerramento = models.DateField(verbose_name="Data de Encerramento")
-	id_venda = models.IntegerField(blank=True, null=True, verbose_name="ID Venda ContaAzul")
+	id_venda_contaazul = models.CharField(max_length=100, blank=True, null=True, verbose_name="ID Venda ContaAzul")
 
 	class Meta:
 		verbose_name_plural = "Pacotes por Usuário"
@@ -75,7 +74,7 @@ class CreditoPorUsuario(models.Model):
 	is_active = models.BooleanField(default=False, verbose_name="Este plano está ativo?")
 	data_compra = models.DateField(verbose_name="Data de Ativação")
 	data_encerramento = models.DateField(verbose_name="Data de Encerramento")
-	id_venda = models.IntegerField(blank=True, null=True, verbose_name="ID Venda ContaAzul")
+	id_venda_contaazul = models.CharField(max_length=100, blank=True, null=True, verbose_name="ID Venda ContaAzul")
 
 	class Meta:
 		verbose_name_plural = "Créditos por Usuário"
