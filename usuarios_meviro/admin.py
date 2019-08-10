@@ -168,7 +168,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
     actions = ['sincronizar_contaazul']
 
-    def salvar_pacote_por_usuario_contaazul(self, id_contaazul, array_id_pacotes_por_usuario, id_venda, data_venda):
+    def salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, id_venda, data_venda):
     	
     	for id_pacote_por_usuario in array_id_pacotes_por_usuario:
     		pacote_por_usuario_database = PacotePorUsuario.objects.filter(usuario=id_contaazul, pacote=id_pacote_por_usuario, id_venda=id_venda)
