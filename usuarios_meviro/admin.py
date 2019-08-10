@@ -17,6 +17,7 @@ import base64
 from django import forms
 
 from .models import UsuarioEspaco, Agendamento, PacotePorUsuario, CreditoPorUsuario
+from administrativo.models import Pacote
 from contaazul.admin import TokenAdmin
 
 
