@@ -171,10 +171,10 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     def salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, id_venda, data_venda):
     	
     	for id_pacote_por_usuario in array_id_pacotes_por_usuario:
-    		pacote_por_usuario_database = PacotePorUsuario.objects.filter(usuario=id_contaazul, pacote=id_pacote_por_usuario, id_venda=id_venda)
+    		usuario_espaco = UsuarioEspaco.objects.filter(id_contaazul=id_contaazul)
+    		pacote = Pacote.objectes.filter(id_contaazul=id_pacote_por_usuario)
+    		pacote_por_usuario_database = PacotePorUsuario.objects.filter(usuario=usuario_espaco, pacote=pacote, id_venda=id_venda)
     		if not pacote_por_usuario_database.exists():
-    			usuario_espaco = UsuarioEspaco.objects.filter(id_contaazul=id_contaazul)
-    			pacote = Pacote.objectes.filter(id_contaazul=id_pacote_por_usuario)
     			pacote_por_usuario = PacotePorUsuario(usuario=usuario_espaco,pacote=pacote,ativo=False,data_ativacao=None,data_encerramento=None,id_venda=id_venda)
     			pacote_por_usuario.save()
 
