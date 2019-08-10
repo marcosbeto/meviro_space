@@ -84,7 +84,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 				array_id_pacotes_por_usuario.append(id_pacote)
 				
 
-		PacotePorUsuario.salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, id_venda, data_venda)
+		PacotePorUsuarioAdmin.salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, id_venda, data_venda)
 		
 		messages.success(request, "Lista %s" % message)
 
