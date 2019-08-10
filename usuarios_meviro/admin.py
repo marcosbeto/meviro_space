@@ -87,8 +87,8 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 
 			PacotePorUsuarioAdmin.salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, sale['id'], sale['emission'])
 		
+		
 		messages.success(request, "Lista %s" % message)
-
 		url_base = reverse('admin:usuarios_meviro_usuarioespaco_changelist',)
 		return HttpResponseRedirect(url_base);
 
@@ -176,7 +176,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     		pacote = Pacote.objects.filter(id_contaazul=id_pacote_por_usuario)
     		pacote_por_usuario_database = PacotePorUsuario.objects.filter(usuario=usuario_espaco, pacote=pacote, id_venda=id_venda)
     		if not pacote_por_usuario_database.exists():
-    			pacote_por_usuario = PacotePorUsuario(usuario=usuario_espaco,pacote=pacote,ativo=False,data_ativacao=None,data_encerramento=None,id_venda=id_venda)
+    			pacote_por_usuario = PacotePorUsuario(usuario=usuario_espaco,pacote=pacote,ativo=False,data_ativacao=None,data_encerramento=None,id_venda_contaazul=id_venda)
     			pacote_por_usuario.save()
 
     def get_urls(self):
