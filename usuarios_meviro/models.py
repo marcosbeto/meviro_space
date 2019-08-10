@@ -58,6 +58,7 @@ class UsuarioEspaco(models.Model):
 
 class PacotePorUsuario(models.Model):
 	usuario = models.ForeignKey(UsuarioEspaco, on_delete=models.DO_NOTHING, verbose_name="Nome do Usuário")
+	# pacotes = models.ManyToManyField(Pacote, verbose_name="Pacotes contratados pelo Usuário")
 	pacote = models.ForeignKey(Pacote, on_delete=models.DO_NOTHING, verbose_name="Pacote")
 	ativo = models.BooleanField(default=False, verbose_name="Este plano está ativo?")
 	data_ativacao = models.DateField(verbose_name="Data de Ativação")

@@ -65,17 +65,26 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
 		params = {"customer_id": id_contaazul, "status": "COMMITTED"}
 		response = requests.request(method="GET", url="https://api.contaazul.com/v1/sales", params=params, headers=headers)
-		content = response.content
-		content_json = json.loads(content.decode("utf-8"))
+		all_sales = response.content
+		all_sales_json = json.loads(all_sales.decode("utf-8"))
+		
 		message = ""
-		for sale in content_json:
+
+		for sale in all_sales_json:
 			
 			params_sale = {"id": sale['id']}
 			response_sale = requests.request(method="GET", url="https://api.contaazul.com/v1/sales/%s/items" % sale['id'], params=params_sale, headers=headers)
-			content_sale = response_sale.content
-			content_sale_json = json.loads(content_sale.decode("utf-8"))
-			for item in content_sale_json:
-				message = message + json.dumps(item['item']['id']).strip('"')
+			items_sale = response_sale.content
+			items_sale_json = json.loads(items_sale.decode("utf-8"))
+			
+			array_id_pacotes_por_usuario = []
+
+			for item in items_sale_json:
+				id_pacote = json.dumps(item['item']['id']).strip('"')
+				array_id_pacotes_por_usuario.append(id_pacote)
+				
+
+		PacotePorUsuario.salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, id_venda, data_venda)
 		
 		messages.success(request, "Lista %s" % message)
 
@@ -158,6 +167,16 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     advanced_search_form = ActiveFilterForm()
     change_list_template = "admin/administrativo/pacotes_por_usuario/change_list.html"
     actions = ['sincronizar_contaazul']
+
+    def salvar_pacote_por_usuario_contaazul(self, id_contaazul, array_id_pacotes_por_usuario, id_venda, data_venda):
+    	
+    	for id_pacote_por_usuario in array_id_pacotes_por_usuario:
+    		pacote_por_usuario_database = PacotePorUsuario.objects.filter(usuario=id_contaazul, pacote=id_pacote_por_usuario, id_venda=id_venda)
+    		if not pacote_por_usuario_database.exists():
+    			usuario_espaco = UsuarioEspaco.objects.filter(id_contaazul=id_contaazul)
+    			pacote = Pacote.objectes.filter(id_contaazul=id_pacote_por_usuario)
+    			pacote_por_usuario = PacotePorUsuario(usuario=usuario_espaco,pacote=pacote,ativo=False,data_ativacao=None,data_encerramento=None,id_venda=id_venda)
+    			pacote_por_usuario.save()
 
     def get_urls(self):
 	    urls = super().get_urls()
