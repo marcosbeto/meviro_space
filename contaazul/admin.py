@@ -91,7 +91,7 @@ class TokenAdmin(admin.ModelAdmin):
 
 	def atualizar_token(self):
 		#TODO: tratar excessões
-		headers = self.set_authorization_header('basic')
+		headers = self.set_authorization_header('basic', None)
 		
 		#TODO: melhorar modelo de atualizacao
 		token_obj = Token.objects.first()
