@@ -9,6 +9,11 @@ class Token(models.Model):
 	def __str__(self):
 		return u'%s' % (self.token)
 
+	def save(self, *args, **kwargs):
+		if self.__class__.objects.count():
+			self.pk = self.__class__.objects.first().pk
+		super().save(*args, **kwargs)
+
 	class Meta:
 		verbose_name = "Token"
 		verbose_name_plural = "Tokens"
