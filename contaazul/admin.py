@@ -116,7 +116,7 @@ class TokenAdmin(admin.ModelAdmin):
 		#TODO: melhorar modelo de atualizacao
 		token_obj = Token.objects.first()
 		post_data = self.set_authorization_request_data('refresh_token', token_obj.refresh_token, None)
-		token_content_json = request_contaazul('refresh_token','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
+		token_content_json = self.request_contaazul('refresh_token','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
 
 		# response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
 		# token_content = response.content
@@ -164,7 +164,7 @@ class TokenAdmin(admin.ModelAdmin):
 		#TODO: colocar requisicoes ao Conta Azul em outro metodo
 		# response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
 
-		token_content_json = request_contaazul('authorization_code','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
+		token_content_json = self.request_contaazul('authorization_code','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
 		
 		access_token = token_content_json['access_token']
 		refresh_token = token_content_json['refresh_token']
