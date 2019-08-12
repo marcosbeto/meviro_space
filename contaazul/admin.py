@@ -86,15 +86,16 @@ class TokenAdmin(admin.ModelAdmin):
 
 		return headers
 
+	# def request_contaazul(self, type, url, params, data, headers):
+
+
 	def atualizar_token(self):
 		#TODO: tratar excessões
-
-		authorization_str = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=settings.CA_CLIENT_ID, CLIENT_KEY=settings.CA_CLIENT_KEY)
-		authorization_str_encoded = base64.b64encode(authorization_str.encode('ascii'))
-		headers={'Authorization': 'Basic %s' % authorization_str_encoded.decode("utf-8")}
-
+		headers = self.set_authorization_header('basic')
+		
 		#TODO: melhorar modelo de atualizacao
-		token_obj = Token.objects.get(pk=1)
+		token_obj = Token.objects.first()
+		
 		current_refresh_token = token_obj.refresh_token
 		post_data = {'grant_type': 'refresh_token', 'refresh_token': current_refresh_token}
 
@@ -107,7 +108,7 @@ class TokenAdmin(admin.ModelAdmin):
 		refresh_token = token_content_json['refresh_token']
 		
 		#TODO: tratar exececoes
-		Token.objects.filter(pk=1).update(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
+		Token.objects.first().update(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
 		
 		return access_token
 
