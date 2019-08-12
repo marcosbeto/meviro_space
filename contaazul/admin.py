@@ -159,7 +159,7 @@ class TokenAdmin(admin.ModelAdmin):
 
 		# post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'https://mevirospace.herokuapp.com/admin/contaazul/token/', 'code': code}
 
-		post_data = self.set_authorization_request_data('authorization_code', None, token_obj.code)
+		post_data = self.set_authorization_request_data('authorization_code', None, code)
 		
 		#TODO: colocar requisicoes ao Conta Azul em outro metodo
 		# response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
