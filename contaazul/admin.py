@@ -108,7 +108,9 @@ class TokenAdmin(admin.ModelAdmin):
 		refresh_token = token_content_json['refresh_token']
 		
 		#TODO: tratar exececoes
-		token_obj.save(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
+
+		token_obj_to_refresh = Token(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
+		token_obj_to_refresh.save()
 		
 		return access_token
 
