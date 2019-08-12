@@ -67,14 +67,13 @@ class TokenAdmin(admin.ModelAdmin):
 
 	#END: Metodos para tratamento de requisições
 
-
-
 	def action_atualizar_token(self, request):
 		#TODO: tratar excessões
 		token = self.atualizar_token()
 		messages.success(request, 'Token atualizado: %s' % token)
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
 		return HttpResponseRedirect(url)
+
 
 	def set_authorization_header(self, type_authorization, token):
 		headers = {}
@@ -86,7 +85,28 @@ class TokenAdmin(admin.ModelAdmin):
 
 		return headers
 
-	# def request_contaazul(self, type, url, params, data, headers):
+
+	def request_contaazul(self, type, url, params, data, headers):
+		if type=='refresh_token':
+			request_response = requests.request("POST", url, params=params, headers=headers)
+		elif type=='authorization_code': 
+			request_response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=params, headers=headers)
+
+		token_content = request_response.content
+		token_content_json = json.loads(token_content.decode("utf-8"))
+
+		return token_content_json
+
+
+	def set_authorization_request_data(self, type, token, code):
+		data = {}
+		if type == 'refresh_token':
+			data = {'grant_type': 'refresh_token', 'refresh_token': current_refresh_token}
+		elif type == 'authorization_code':
+			data = {'grant_type': 'authorization_code', 'redirect_uri': settings.REDIRECT_URI , 'code': code}
+
+
+		return data
 
 
 	def atualizar_token(self):
@@ -95,14 +115,13 @@ class TokenAdmin(admin.ModelAdmin):
 		
 		#TODO: melhorar modelo de atualizacao
 		token_obj = Token.objects.first()
-		
-		current_refresh_token = token_obj.refresh_token
-		post_data = {'grant_type': 'refresh_token', 'refresh_token': current_refresh_token}
+		post_data = self.set_authorization_request_data('refresh_token', token_obj.refresh_token, None)
+		token_content_json = request_contaazul('refresh_token','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
 
-		response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
-		token_content = response.content
+		# response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
+		# token_content = response.content
 
-		token_content_json = json.loads(token_content.decode("utf-8"))
+		# token_content_json = json.loads(token_content.decode("utf-8"))
 
 		access_token = token_content_json['access_token']
 		refresh_token = token_content_json['refresh_token']
@@ -111,8 +130,9 @@ class TokenAdmin(admin.ModelAdmin):
 
 		token_obj_to_refresh = Token(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
 		token_obj_to_refresh.save()
-		
+
 		return access_token
+
 
 	def requisitar_autenticacao_inicial(self, request):
 		#TODO: tratar excessões
@@ -123,27 +143,31 @@ class TokenAdmin(admin.ModelAdmin):
 			url = endpoint.format(REDIRECT_URI='https://mevirospace.herokuapp.com/admin/contaazul/token/', CLIENT_ID=client_id, STATE=state_code)
 		return HttpResponseRedirect(url)
 
+
 	def acessar_auth_token(self, request, code):
 		#TODO: tratar excessões
 
 		#BEGIN: PARTE REPLICADA EM OUTRO METODO
-		client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE' #TODO: colocar no global
-		client_key = 'H3l6iIiNYgsYyjh6m5sWZ8WMoKL5rOBy'
-		to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
-		encoded = base64.b64encode(to_encode.encode('ascii'))
-		headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
+		# client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE' #TODO: colocar no global
+		# client_key = 'H3l6iIiNYgsYyjh6m5sWZ8WMoKL5rOBy'
+		# to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
+		# encoded = base64.b64encode(to_encode.encode('ascii'))
+		# headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
 		#END: PARTE REPLICADA EM OUTRO METODO
 
-		post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'https://mevirospace.herokuapp.com/admin/contaazul/token/', 'code': code}
+		headers = self.set_authorization_header('basic', None)
+
+		# post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'https://mevirospace.herokuapp.com/admin/contaazul/token/', 'code': code}
+
+		post_data = self.set_authorization_request_data('authorization_code', None, token_obj.code)
 		
 		#TODO: colocar requisicoes ao Conta Azul em outro metodo
-		response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
-		
-		authorization_content = response.content
-		authorization_content_json = json.loads(authorization_content.decode("utf-8"))
+		# response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
 
-		access_token = authorization_content_json['access_token']
-		refresh_token = authorization_content_json['refresh_token']
+		token_content_json = request_contaazul('authorization_code','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
+		
+		access_token = token_content_json['access_token']
+		refresh_token = token_content_json['refresh_token']
 
 		#TODO: tratar excessões
 		token_object = Token(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
