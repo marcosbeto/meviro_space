@@ -172,7 +172,7 @@ class TokenAdmin(admin.ModelAdmin):
 		#TODO: tratar excessões
 		token_object = Token(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
 		token_object.save()
-		messages.success(request, authorization_content_json)
+		messages.success(request, token_content_json)
 		
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
 		return HttpResponseRedirect(url)
