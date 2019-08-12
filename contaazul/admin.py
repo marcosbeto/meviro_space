@@ -101,7 +101,7 @@ class TokenAdmin(admin.ModelAdmin):
 	def set_authorization_request_data(self, type, token, code):
 		data = {}
 		if type == 'refresh_token':
-			data = {'grant_type': 'refresh_token', 'refresh_token': current_refresh_token}
+			data = {'grant_type': 'refresh_token', 'refresh_token': token}
 		elif type == 'authorization_code':
 			data = {'grant_type': 'authorization_code', 'redirect_uri': settings.REDIRECT_URI , 'code': code}
 
