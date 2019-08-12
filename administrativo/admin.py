@@ -33,28 +33,31 @@ class PacoteAdmin(admin.ModelAdmin):
 		#Todo: tratar excecoes
 		token = TokenAdmin.atualizar_token(None)
 
+		headers = TokenAdmin.set_authorization_header('bearer', token)
+		# headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
+		try:
+			post_data = {"name": form.data['nome'], "value": form.data['valor_venda'], "cost": form.data['valor_custo'], "code": form.data['codigo']}
+		except:
+			return 'error'
 
-		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
-		post_data = {"name": form.data['nome'], "value": form.data['valor_venda'], "cost": form.data['valor_custo'], "code": form.data['codigo']}
-
-		if form.data['id_contaazul']:
-			#TODO: Colocar requests do conta AZUL em outro metodo (/contaazul)
-			response = requests.request(method="PUT", url="https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
-			content = response.content
-			messages.success(request, "Atualizando pacote: %s" % content)
+		if form.data['id_contaazul']: #atualizando pacote
+			response_content_json = TokenAdmin.request_contaazul('save_service', "https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], None, json.dumps(post_data), headers)
+			messages.success(request, response_content_json)
 		else:
 			#TODO: Colocar requests do conta AZUL em outro metodo (/contaazul)
-			response = requests.request(method="POST", url="https://api.contaazul.com/v1/services", data=json.dumps(post_data), headers=headers)
-			content = response.content
-			content_json = json.loads(content.decode("utf-8"))
-			id_contaazul = content_json['id']
+			# response = requests.request(method="POST", url="https://api.contaazul.com/v1/services", data=json.dumps(post_data), headers=headers)
+			# content = response.content
+			# content_json = json.loads(content.decode("utf-8"))
+
+			response_content_json = TokenAdmin.request_contaazul('update_service', "https://api.contaazul.com/v1/services", None, json.dumps(post_data), headers)
+
 			_mutable = form.data._mutable
 			form.data._mutable = True
-			form.data['id_contaazul'] = id_contaazul
-			obj.id_contaazul = id_contaazul
+			form.data['id_contaazul'] = response_content_json['id']
+			obj.id_contaazul = response_content_json['id']
 			form.data._mutable = _mutable
 			#TODO: melhorar modelo de mensagens de resposta e excecoes
-			messages.success(request, "Inserindo novo pacote: %s" % content)
+			messages.success(request, response_content_json)
 
 		super(PacoteAdmin, self).save_model(request, obj, form, change)
 

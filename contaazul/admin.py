@@ -60,12 +60,14 @@ class TokenAdmin(admin.ModelAdmin):
 
 	    return ChangeList
 
+
 	def lookup_allowed(self, lookup):
 		if lookup in self.advanced_search_form.fields.keys():
 			return True
 		return super(MyModelAdmin, self).lookup_allowed(lookup)
 
 	#END: Metodos para tratamento de requisições
+
 
 	def action_atualizar_token(self, request):
 		#TODO: tratar excessões
@@ -80,22 +82,10 @@ class TokenAdmin(admin.ModelAdmin):
 		if type_authorization == 'basic':
 			authorization_str = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=settings.CA_CLIENT_ID, CLIENT_KEY=settings.CA_CLIENT_KEY)
 			headers={'Authorization': 'Basic %s' % base64.b64encode(authorization_str.encode('ascii')).decode("utf-8")}
-		else:
+		elif type_authorization == 'bearer':
 			headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
 
 		return headers
-
-
-	def request_contaazul(self, type, url, params, data, headers):
-		if type=='refresh_token':
-			request_response = requests.request("POST", url, params=params, headers=headers)
-		elif type=='authorization_code': 
-			request_response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=params, headers=headers)
-
-		token_content = request_response.content
-		token_content_json = json.loads(token_content.decode("utf-8"))
-
-		return token_content_json
 
 
 	def set_authorization_request_data(self, type, token, code):
@@ -105,84 +95,101 @@ class TokenAdmin(admin.ModelAdmin):
 		elif type == 'authorization_code':
 			data = {'grant_type': 'authorization_code', 'redirect_uri': settings.REDIRECT_URI , 'code': code}
 
-
 		return data
+
+
+	def request_contaazul(self, type, url, params, data, headers):
+		if type=='refresh_token':
+			try:
+				request_response = requests.request("POST", url, params=params, headers=headers)
+			except:
+				return 'error'
+		elif type=='authorization_code': 
+			try:
+				request_response = requests.request("POST", url, params=params, headers=headers)
+			except:
+				return 'error'
+		elif type == 'save_service':
+			try:
+				# requests.request(method="PUT", url="https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
+				request_response = requests.request("PUT", url, data=data, headers=headers)
+			except:
+				return 'error'
+		elif type == 'update_service':
+			try:
+				request_response = requests.request("POST", url, data=data, headers=headers)
+			except:
+				return 'error'
+				
+		token_content_json = json.loads(request_response.content.decode("utf-8"))
+
+		return token_content_json
 
 
 	def atualizar_token(self):
 		#TODO: tratar excessões
-		headers = self.set_authorization_header('basic', None)
-		
-		#TODO: melhorar modelo de atualizacao
-		token_obj = Token.objects.first()
+		try:
+			token_obj = Token.objects.first()
+		except:
+			return 'error'
+
 		post_data = self.set_authorization_request_data('refresh_token', token_obj.refresh_token, None)
+		headers = self.set_authorization_header('basic', None)
+
 		token_content_json = self.request_contaazul('refresh_token','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
-
-		# response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
-		# token_content = response.content
-
-		# token_content_json = json.loads(token_content.decode("utf-8"))
-
-		access_token = token_content_json['access_token']
-		refresh_token = token_content_json['refresh_token']
 		
 		#TODO: tratar exececoes
+		try:
+			token_obj_to_refresh = Token(token=token_content_json['access_token'], refresh_token=token_content_json['refresh_token'], hora_atualizacao=datetime.datetime.now())
+			token_obj_to_refresh.save()
+		except:
+			return 'error'
 
-		token_obj_to_refresh = Token(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
-		token_obj_to_refresh.save()
-
-		return access_token
+		return token_content_json['access_token']
 
 
 	def requisitar_autenticacao_inicial(self, request):
 		#TODO: tratar excessões
-		if request.method == 'GET':
-			client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE'
-			state_code = 'orivem'
-			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
-			url = endpoint.format(REDIRECT_URI='https://mevirospace.herokuapp.com/admin/contaazul/token/', CLIENT_ID=client_id, STATE=state_code)
-		return HttpResponseRedirect(url)
+		try:
+			if request.method == 'GET':
+				endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
+				url = endpoint.format(REDIRECT_URI=settings.REDIRECT_URI, CLIENT_ID=settings.CLIENT_ID, STATE=settings.CA_STATE_CODE)
+				return HttpResponseRedirect(url)
+			else:
+				return 'error'	
+		except:
+			return 'error'
 
 
 	def acessar_auth_token(self, request, code):
-		#TODO: tratar excessões
-
-		#BEGIN: PARTE REPLICADA EM OUTRO METODO
-		# client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE' #TODO: colocar no global
-		# client_key = 'H3l6iIiNYgsYyjh6m5sWZ8WMoKL5rOBy'
-		# to_encode = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
-		# encoded = base64.b64encode(to_encode.encode('ascii'))
-		# headers={'Authorization': 'Basic %s' % encoded.decode("utf-8")}
-		#END: PARTE REPLICADA EM OUTRO METODO
-
-		headers = self.set_authorization_header('basic', None)
-
-		# post_data = {'grant_type': 'authorization_code', 'redirect_uri': 'https://mevirospace.herokuapp.com/admin/contaazul/token/', 'code': code}
-
 		post_data = self.set_authorization_request_data('authorization_code', None, code)
-		
-		#TODO: colocar requisicoes ao Conta Azul em outro metodo
-		# response = requests.request("POST", 'https://api.contaazul.com/oauth2/token/', params=post_data, headers=headers)
+		headers = self.set_authorization_header('basic', None)
 
 		token_content_json = self.request_contaazul('authorization_code','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
 		
-		access_token = token_content_json['access_token']
-		refresh_token = token_content_json['refresh_token']
-
 		#TODO: tratar excessões
-		token_object = Token(token=access_token, refresh_token=refresh_token, hora_atualizacao=datetime.datetime.now())
-		token_object.save()
+		try:
+			token_object = Token(token=token_content_json['access_token'], refresh_token=token_content_json['refresh_token'], hora_atualizacao=datetime.datetime.now())
+			token_object.save()
+		except:
+			return 'error'
+
+		#TODO: melhorar sistema de mensagens
 		messages.success(request, token_content_json)
 		
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
 		return HttpResponseRedirect(url)
 
+
 	def changelist_view(self, request, extra_context=None):
 	    self.other_search_fields = {} 
 	    
-	    code = request.GET.get('code')
-	    access_token = request.GET.get('access_token')
-	    refresh_token = request.GET.get('refresh_token')
+	    try:
+	    	code = request.GET.get('code')
+	    	access_token = request.GET.get('access_token')
+	    	refresh_token = request.GET.get('refresh_token')
+	    except:
+	    	return 'error'
 
 	    asf = self.advanced_search_form
 	    extra_context = {'asf':asf}

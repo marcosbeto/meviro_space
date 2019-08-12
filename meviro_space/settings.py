@@ -199,4 +199,5 @@ APP_ORDER = [
 CA_CLIENT_ID = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE'
 CA_CLIENT_KEY = 'H3l6iIiNYgsYyjh6m5sWZ8WMoKL5rOBy'
 REDIRECT_URI = 'https://mevirospace.herokuapp.com/admin/contaazul/token/'
+CA_STATE_CODE = 'orivem'
     
