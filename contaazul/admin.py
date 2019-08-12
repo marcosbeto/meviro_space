@@ -16,7 +16,9 @@ from django.shortcuts import render
 from django.contrib import messages
 import base64
 from .models import Token
+from django.conf import settings
 import datetime
+
 
 
 class ActiveFilterForm(forms.Form):
@@ -66,6 +68,7 @@ class TokenAdmin(admin.ModelAdmin):
 	#END: Metodos para tratamento de requisições
 
 
+
 	def action_atualizar_token(self, request):
 		#TODO: tratar excessões
 		token = self.atualizar_token()
@@ -73,13 +76,20 @@ class TokenAdmin(admin.ModelAdmin):
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
 		return HttpResponseRedirect(url)
 
+	def set_authorization_header(self, type_authorization, token):
+		headers = {}
+		if type_authorization == 'basic':
+			authorization_str = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=settings.CA_CLIENT_ID, CLIENT_KEY=settings.CA_CLIENT_KEY)
+			headers={'Authorization': 'Basic %s' % base64.b64encode(authorization_str.encode('ascii')).decode("utf-8")}
+		else:
+			headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
+
+		return headers
 
 	def atualizar_token(self):
 		#TODO: tratar excessões
-		client_id = 'pPIYG4rGDP11A0CHTeanFTSLeGiZNGuE' #TODO: colocar variaveis globais nos settings
-		client_key = 'H3l6iIiNYgsYyjh6m5sWZ8WMoKL5rOBy' #TODO: colocar variaveis globais nos settings
-		
-		authorization_str = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=client_id, CLIENT_KEY=client_key)
+
+		authorization_str = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=settings.CA_CLIENT_ID, CLIENT_KEY=settings.CA_CLIENT_KEY)
 		authorization_str_encoded = base64.b64encode(authorization_str.encode('ascii'))
 		headers={'Authorization': 'Basic %s' % authorization_str_encoded.decode("utf-8")}
 

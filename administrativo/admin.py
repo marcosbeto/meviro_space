@@ -30,17 +30,20 @@ class PacoteAdmin(admin.ModelAdmin):
 	filter_horizontal = ('regra', 'contrato', 'curso','outraAtividade')
     
 	def save_model(self, request, obj, form, change):
-		
+		#Todo: tratar excecoes
 		token = TokenAdmin.atualizar_token(None)
+
 
 		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
 		post_data = {"name": form.data['nome'], "value": form.data['valor_venda'], "cost": form.data['valor_custo'], "code": form.data['codigo']}
 
 		if form.data['id_contaazul']:
+			#TODO: Colocar requests do conta AZUL em outro metodo (/contaazul)
 			response = requests.request(method="PUT", url="https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
 			content = response.content
 			messages.success(request, "Atualizando pacote: %s" % content)
 		else:
+			#TODO: Colocar requests do conta AZUL em outro metodo (/contaazul)
 			response = requests.request(method="POST", url="https://api.contaazul.com/v1/services", data=json.dumps(post_data), headers=headers)
 			content = response.content
 			content_json = json.loads(content.decode("utf-8"))
@@ -50,6 +53,7 @@ class PacoteAdmin(admin.ModelAdmin):
 			form.data['id_contaazul'] = id_contaazul
 			obj.id_contaazul = id_contaazul
 			form.data._mutable = _mutable
+			#TODO: melhorar modelo de mensagens de resposta e excecoes
 			messages.success(request, "Inserindo novo pacote: %s" % content)
 
 		super(PacoteAdmin, self).save_model(request, obj, form, change)

@@ -164,6 +164,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	    			pacote_por_usuario = PacotePorUsuario(usuario=usuario_espaco,pacote=pacote,ativo=False,data_ativacao=None,data_encerramento=None,id_venda_contaazul=id_venda)
 	    			pacote_por_usuario.save()
 	    	except:
+	    		#TODO: melhorar o tratamento de excecao
 	    		return True
 
 	    
