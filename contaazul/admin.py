@@ -82,8 +82,8 @@ class InterfaceTokenAdmin():
 		except:
 			return 'error'
 
-		post_data = set_authorization_request_data('refresh_token', token_obj.refresh_token, None)
-		headers = set_authorization_header('basic', None)
+		post_data = self.set_authorization_request_data('refresh_token', token_obj.refresh_token, None)
+		headers = self.set_authorization_header('basic', None)
 
 		token_content_json = self.request_contaazul('refresh_token','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
 		
@@ -167,7 +167,7 @@ class TokenAdmin(admin.ModelAdmin):
 		post_data = InterfaceTokenAdmin.set_authorization_request_data('authorization_code', None, code)
 		headers = InterfaceTokenAdmin.set_authorization_header('basic', None)
 
-		token_content_json = self.request_contaazul('authorization_code','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
+		token_content_json = InterfaceTokenAdmin.request_contaazul('authorization_code','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
 		
 		#TODO: tratar excessões
 		try:
