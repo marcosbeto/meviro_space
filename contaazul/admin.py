@@ -25,6 +25,79 @@ class ActiveFilterForm(forms.Form):
     code = forms.CharField()
     state = forms.CharField()
 
+class InterfaceTokenAdmin():
+
+	def set_authorization_header(self, type_authorization, token):
+		headers = {}
+		if type_authorization == 'basic':
+			authorization_str = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=settings.CA_CLIENT_ID, CLIENT_KEY=settings.CA_CLIENT_KEY)
+			headers={'Authorization': 'Basic %s' % base64.b64encode(authorization_str.encode('ascii')).decode("utf-8")}
+		elif type_authorization == 'bearer':
+			headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
+
+		return headers
+
+
+	def set_authorization_request_data(self, type, token, code):
+		data = {}
+		if type == 'refresh_token':
+			data = {'grant_type': 'refresh_token', 'refresh_token': token}
+		elif type == 'authorization_code':
+			data = {'grant_type': 'authorization_code', 'redirect_uri': settings.REDIRECT_URI , 'code': code}
+
+		return data
+
+	def request_contaazul(self, type, url, params, data, headers):
+		if type=='refresh_token':
+			try:
+				request_response = requests.request("POST", url, params=params, headers=headers)
+			except:
+				return 'error'
+		elif type=='authorization_code': 
+			try:
+				request_response = requests.request("POST", url, params=params, headers=headers)
+			except:
+				return 'error'
+		elif type == 'save_service':
+			try:
+				# requests.request(method="PUT", url="https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
+				request_response = requests.request("PUT", url, data=data, headers=headers)
+			except:
+				return 'error'
+		elif type == 'update_service':
+			try:
+				request_response = requests.request("POST", url, data=data, headers=headers)
+			except:
+				return 'error'
+
+		token_content_json = json.loads(request_response.content.decode("utf-8"))
+
+		return token_content_json
+
+
+	def atualizar_token():
+		#TODO: tratar excessões
+		try:
+			token_obj = Token.objects.first()
+		except:
+			return 'error'
+
+		post_data = set_authorization_request_data('refresh_token', token_obj.refresh_token, None)
+		headers = set_authorization_header('basic', None)
+
+		token_content_json = self.request_contaazul('refresh_token','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
+		
+		#TODO: tratar exececoes
+		try:
+			token_obj_to_refresh = Token(token=token_content_json['access_token'], refresh_token=token_content_json['refresh_token'], hora_atualizacao=datetime.datetime.now())
+			token_obj_to_refresh.save()
+		except:
+			return 'error'
+
+		return token_content_json['access_token']
+
+
+
 class TokenAdmin(admin.ModelAdmin):
 	search_fields = ['token']
 
@@ -71,81 +144,10 @@ class TokenAdmin(admin.ModelAdmin):
 
 	def action_atualizar_token(self, request):
 		#TODO: tratar excessões
-		token = self.atualizar_token()
+		token = InterfaceTokenAdmin.atualizar_token()
 		messages.success(request, 'Token atualizado: %s' % token)
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
 		return HttpResponseRedirect(url)
-
-
-	def set_authorization_header(self, type_authorization, token):
-		headers = {}
-		if type_authorization == 'basic':
-			authorization_str = '{CLIENT_ID}:{CLIENT_KEY}'.format(CLIENT_ID=settings.CA_CLIENT_ID, CLIENT_KEY=settings.CA_CLIENT_KEY)
-			headers={'Authorization': 'Basic %s' % base64.b64encode(authorization_str.encode('ascii')).decode("utf-8")}
-		elif type_authorization == 'bearer':
-			headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
-
-		return headers
-
-
-	def set_authorization_request_data(self, type, token, code):
-		data = {}
-		if type == 'refresh_token':
-			data = {'grant_type': 'refresh_token', 'refresh_token': token}
-		elif type == 'authorization_code':
-			data = {'grant_type': 'authorization_code', 'redirect_uri': settings.REDIRECT_URI , 'code': code}
-
-		return data
-
-
-	def request_contaazul(self, type, url, params, data, headers):
-		if type=='refresh_token':
-			try:
-				request_response = requests.request("POST", url, params=params, headers=headers)
-			except:
-				return 'error'
-		elif type=='authorization_code': 
-			try:
-				request_response = requests.request("POST", url, params=params, headers=headers)
-			except:
-				return 'error'
-		elif type == 'save_service':
-			try:
-				# requests.request(method="PUT", url="https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
-				request_response = requests.request("PUT", url, data=data, headers=headers)
-			except:
-				return 'error'
-		elif type == 'update_service':
-			try:
-				request_response = requests.request("POST", url, data=data, headers=headers)
-			except:
-				return 'error'
-				
-		token_content_json = json.loads(request_response.content.decode("utf-8"))
-
-		return token_content_json
-
-
-	def atualizar_token(self):
-		#TODO: tratar excessões
-		try:
-			token_obj = Token.objects.first()
-		except:
-			return 'error'
-
-		post_data = self.set_authorization_request_data('refresh_token', token_obj.refresh_token, None)
-		headers = self.set_authorization_header('basic', None)
-
-		token_content_json = self.request_contaazul('refresh_token','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
-		
-		#TODO: tratar exececoes
-		try:
-			token_obj_to_refresh = Token(token=token_content_json['access_token'], refresh_token=token_content_json['refresh_token'], hora_atualizacao=datetime.datetime.now())
-			token_obj_to_refresh.save()
-		except:
-			return 'error'
-
-		return token_content_json['access_token']
 
 
 	def requisitar_autenticacao_inicial(self, request):
@@ -162,8 +164,8 @@ class TokenAdmin(admin.ModelAdmin):
 
 
 	def acessar_auth_token(self, request, code):
-		post_data = self.set_authorization_request_data('authorization_code', None, code)
-		headers = self.set_authorization_header('basic', None)
+		post_data = InterfaceTokenAdmin.set_authorization_request_data('authorization_code', None, code)
+		headers = InterfaceTokenAdmin.set_authorization_header('basic', None)
 
 		token_content_json = self.request_contaazul('authorization_code','https://api.contaazul.com/oauth2/token/', post_data, None, headers)
 		

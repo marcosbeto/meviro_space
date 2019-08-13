@@ -15,7 +15,7 @@ import base64
 
 from django import forms
 from .models import Pacote, Contrato, PeriodosReservaRecurso, Regra
-from contaazul.admin import TokenAdmin
+from contaazul.admin import TokenAdmin, InterfaceTokenAdmin
 
 # class TipoAssinaturaAdmin(admin.ModelAdmin):
 #     list_display = ('nome', 'periodo')
@@ -31,7 +31,7 @@ class PacoteAdmin(admin.ModelAdmin):
     
 	def save_model(self, request, obj, form, change):
 		#Todo: tratar excecoes
-		tokenAdmin = TokenAdmin()
+		tokenAdmin = InterfaceTokenAdmin()
 		token = tokenAdmin.atualizar_token()
 
 		headers = TokenAdmin.set_authorization_header('bearer', token)
