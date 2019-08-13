@@ -15,7 +15,7 @@ import base64
 
 from django import forms
 from .models import Pacote, Contrato, PeriodosReservaRecurso, Regra
-from contaazul.admin import TokenAdmin
+from contaazul.admin import TokenAdmin, InterfaceTokenAdmin
 
 # class TipoAssinaturaAdmin(admin.ModelAdmin):
 #     list_display = ('nome', 'periodo')
