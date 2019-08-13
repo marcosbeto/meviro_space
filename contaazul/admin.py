@@ -75,7 +75,7 @@ class InterfaceTokenAdmin():
 		return token_content_json
 
 
-	def atualizar_token():
+	def atualizar_token(self):
 		#TODO: tratar excessões
 		try:
 			token_obj = Token.objects.first()
