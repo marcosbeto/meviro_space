@@ -52,11 +52,11 @@ class PacoteAdmin(admin.ModelAdmin):
 
 			response_content_json = tokenAdmin.request_contaazul('update_service', "https://api.contaazul.com/v1/services", None, json.dumps(post_data), headers)
 
-			_mutable = form.data._mutable
-			form.data._mutable = True
-			form.data['id_contaazul'] = response_content_json['id']
-			obj.id_contaazul = response_content_json['id']
-			form.data._mutable = _mutable
+			# _mutable = form.data._mutable
+			# form.data._mutable = True
+			# form.data['id_contaazul'] = response_content_json['id']
+			# obj.id_contaazul = response_content_json['id']
+			# form.data._mutable = _mutable
 			#TODO: melhorar modelo de mensagens de resposta e excecoes
 			messages.success(request, response_content_json)
 
