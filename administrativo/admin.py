@@ -31,7 +31,7 @@ class PacoteAdmin(admin.ModelAdmin):
     
 	def save_model(self, request, obj, form, change):
 		#Todo: tratar excecoes
-		tokenAdmin = TokenAdmin(admin.ModelAdmin)
+		tokenAdmin = TokenAdmin(None, None)
 		token = tokenAdmin.atualizar_token()
 
 		headers = TokenAdmin.set_authorization_header('bearer', token)
