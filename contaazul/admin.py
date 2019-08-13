@@ -120,7 +120,7 @@ class TokenAdmin(admin.ModelAdmin):
 				request_response = requests.request("POST", url, data=data, headers=headers)
 			except:
 				return 'error'
-
+				
 		token_content_json = json.loads(request_response.content.decode("utf-8"))
 
 		return token_content_json
@@ -150,15 +150,15 @@ class TokenAdmin(admin.ModelAdmin):
 
 	def requisitar_autenticacao_inicial(self, request):
 		#TODO: tratar excessões
-		try:
-			if request.method == 'GET':
-				endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
-				url = endpoint.format(REDIRECT_URI=settings.REDIRECT_URI, CLIENT_ID=settings.CLIENT_ID, STATE=settings.CA_STATE_CODE)
-				return HttpResponseRedirect(url)
-			else:
-				return 'error'	
-		except:
-			return 'error'
+		# try:
+		if request.method == 'GET':
+			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
+			url = endpoint.format(REDIRECT_URI=settings.REDIRECT_URI, CLIENT_ID=settings.CLIENT_ID, STATE=settings.CA_STATE_CODE)
+			return HttpResponseRedirect(url)
+		# 	else:
+		# 		return 'error'	
+		# except:
+		# 	return 'error'
 
 
 	def acessar_auth_token(self, request, code):
