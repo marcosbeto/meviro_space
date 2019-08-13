@@ -25,8 +25,61 @@ class ActiveFilterForm(forms.Form):
     code = forms.CharField()
     state = forms.CharField()
 
+class TokenAdmin(admin.ModelAdmin):
+	search_fields = ['token']
 
-class InterfaceTokenAdmin:
+	advanced_search_form = ActiveFilterForm()
+	change_list_template = "admin/contaazul/token/change_list.html"
+	actions = ['requisitar_autenticacao_inicial', 'atualizar_token']
+	
+	def __init__(self, *args, **kwargs):
+		super(TokenAdmin, self).__init__(*args, **kwargs)
+		self.atualizar_token()
+
+	def get_urls(self):
+		urls = super().get_urls()
+		my_urls = [
+			path('requisitar_autenticacao_inicial/', self.admin_site.admin_view(self.requisitar_autenticacao_inicial), name='requisitar_autenticacao_inicial'),
+			path('atualizar_token/', self.admin_site.admin_view(self.action_atualizar_token), name='atualizar_token'),
+		]
+	    
+		return my_urls + urls
+
+	#BEGIN: Metodos para tratamento de requisições
+
+	def get_changelist(self, request, **kwargs):
+
+	    from django.contrib.admin.views.main import ChangeList
+	    code = self.other_search_fields.get('code',None)
+	    
+	    class ActiveChangeList(ChangeList):
+	    	def get_query_set(self, *args, **kwargs):
+	    		now = datetime.datetime.now()
+	    		qs = super(ActiveChangeList, self).get_query_set(*args, **kwargs)
+	    		return qs.filter((Q(start_date=None) | Q(start_date__lte=now))
+					& (Q(end_date=None) | Q(end_date__gte=now)))
+
+	    if not code is None:
+	    	return ActiveChangeList
+
+	    return ChangeList
+
+
+	def lookup_allowed(self, lookup):
+		if lookup in self.advanced_search_form.fields.keys():
+			return True
+		return super(MyModelAdmin, self).lookup_allowed(lookup)
+
+	#END: Metodos para tratamento de requisições
+
+
+	def action_atualizar_token(self, request):
+		#TODO: tratar excessões
+		token = self.atualizar_token()
+		messages.success(request, 'Token atualizado: %s' % token)
+		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
+		return HttpResponseRedirect(url)
+
 
 	def set_authorization_header(self, type_authorization, token):
 		headers = {}
@@ -99,7 +152,17 @@ class InterfaceTokenAdmin:
 		return token_content_json['access_token']
 
 
-	
+	def requisitar_autenticacao_inicial(self, request):
+		#TODO: tratar excessões
+		# try:
+		if request.method == 'GET':
+			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
+			url = endpoint.format(REDIRECT_URI=settings.REDIRECT_URI, CLIENT_ID=settings.CA_CLIENT_ID, STATE=settings.CA_STATE_CODE)
+			return HttpResponseRedirect(url)
+		# 	else:
+		# 		return 'error'	
+		# except:
+		# 	return 'error'
 
 
 	def acessar_auth_token(self, request, code):
@@ -120,72 +183,6 @@ class InterfaceTokenAdmin:
 		
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
 		return HttpResponseRedirect(url)
-
-
-
-class TokenAdmin(admin.ModelAdmin):
-	search_fields = ['token']
-
-	advanced_search_form = ActiveFilterForm()
-	change_list_template = "admin/contaazul/token/change_list.html"
-	actions = ['requisitar_autenticacao_inicial', 'atualizar_token']
-
-	def get_urls(self):
-		urls = super().get_urls()
-		my_urls = [
-			path('requisitar_autenticacao_inicial/', self.admin_site.admin_view(self.requisitar_autenticacao_inicial), name='requisitar_autenticacao_inicial'),
-			path('atualizar_token/', self.admin_site.admin_view(self.action_atualizar_token), name='atualizar_token'),
-		]
-	    
-		return my_urls + urls
-
-	#BEGIN: Metodos para tratamento de requisições
-
-	def get_changelist(self, request, **kwargs):
-
-	    from django.contrib.admin.views.main import ChangeList
-	    code = self.other_search_fields.get('code',None)
-	    
-	    class ActiveChangeList(ChangeList):
-	    	def get_query_set(self, *args, **kwargs):
-	    		now = datetime.datetime.now()
-	    		qs = super(ActiveChangeList, self).get_query_set(*args, **kwargs)
-	    		return qs.filter((Q(start_date=None) | Q(start_date__lte=now))
-					& (Q(end_date=None) | Q(end_date__gte=now)))
-
-	    if not code is None:
-	    	return ActiveChangeList
-
-	    return ChangeList
-
-
-	def lookup_allowed(self, lookup):
-		if lookup in self.advanced_search_form.fields.keys():
-			return True
-		return super(MyModelAdmin, self).lookup_allowed(lookup)
-
-	#END: Metodos para tratamento de requisições
-
-
-	def action_atualizar_token(self, request):
-		#TODO: tratar excessões
-		token = InterfaceTokenAdmin.atualizar_token()
-		messages.success(request, 'Token atualizado: %s' % token)
-		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
-		return HttpResponseRedirect(url)
-
-
-	def requisitar_autenticacao_inicial(self, request):
-		#TODO: tratar excessões
-		# try:
-		if request.method == 'GET':
-			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
-			url = endpoint.format(REDIRECT_URI=settings.REDIRECT_URI, CLIENT_ID=settings.CA_CLIENT_ID, STATE=settings.CA_STATE_CODE)
-			return HttpResponseRedirect(url)
-		# 	else:
-		# 		return 'error'	
-		# except:
-		# 	return 'error'
 
 
 	def changelist_view(self, request, extra_context=None):
@@ -216,7 +213,7 @@ class TokenAdmin(admin.ModelAdmin):
 	    extra_context = {'code': code, 'access_token': access_token, 'refresh_token': refresh_token} 
 
 	    if (code):
-	    	InterfaceTokenAdmin.acessar_auth_token(request, code)
+	    	self.acessar_auth_token(request, code)
 
 	    return super(TokenAdmin, self).changelist_view(request, extra_context=extra_context)
 	    

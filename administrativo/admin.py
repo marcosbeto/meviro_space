@@ -15,7 +15,7 @@ import base64
 
 from django import forms
 from .models import Pacote, Contrato, PeriodosReservaRecurso, Regra
-from contaazul.admin import TokenAdmin, InterfaceTokenAdmin
+from contaazul.admin import TokenAdmin
 
 # class TipoAssinaturaAdmin(admin.ModelAdmin):
 #     list_display = ('nome', 'periodo')
@@ -31,10 +31,10 @@ class PacoteAdmin(admin.ModelAdmin):
     
 	def save_model(self, request, obj, form, change):
 		#Todo: tratar excecoes
-		tokenAdmin = InterfaceTokenAdmin()
+		tokenAdmin = TokenAdmin()
 		token = tokenAdmin.atualizar_token()
 
-		headers = tokenAdmin.set_authorization_header('bearer', token)
+		headers = TokenAdmin.set_authorization_header('bearer', token)
 		# headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
 		try:
 			post_data = {"name": form.data['nome'], "value": form.data['valor_venda'], "cost": form.data['valor_custo'], "code": form.data['codigo']}
@@ -42,7 +42,7 @@ class PacoteAdmin(admin.ModelAdmin):
 			return 'error'
 
 		if form.data['id_contaazul']: #atualizando pacote
-			response_content_json = tokenAdmin.request_contaazul('save_service', "https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], None, json.dumps(post_data), headers)
+			response_content_json = TokenAdmin.request_contaazul('save_service', "https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], None, json.dumps(post_data), headers)
 			messages.success(request, response_content_json)
 		else:
 			#TODO: Colocar requests do conta AZUL em outro metodo (/contaazul)
@@ -50,13 +50,13 @@ class PacoteAdmin(admin.ModelAdmin):
 			# content = response.content
 			# content_json = json.loads(content.decode("utf-8"))
 
-			response_content_json = tokenAdmin.request_contaazul('update_service', "https://api.contaazul.com/v1/services", None, json.dumps(post_data), headers)
+			response_content_json = TokenAdmin.request_contaazul('update_service', "https://api.contaazul.com/v1/services", None, json.dumps(post_data), headers)
 
-			# _mutable = form.data._mutable
-			# form.data._mutable = True
-			# form.data['id_contaazul'] = response_content_json['id']
-			# obj.id_contaazul = response_content_json['id']
-			# form.data._mutable = _mutable
+			_mutable = form.data._mutable
+			form.data._mutable = True
+			form.data['id_contaazul'] = response_content_json['id']
+			obj.id_contaazul = response_content_json['id']
+			form.data._mutable = _mutable
 			#TODO: melhorar modelo de mensagens de resposta e excecoes
 			messages.success(request, response_content_json)
 
