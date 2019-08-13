@@ -34,7 +34,7 @@ class PacoteAdmin(admin.ModelAdmin):
 		tokenAdmin = InterfaceTokenAdmin()
 		token = tokenAdmin.atualizar_token()
 
-		headers = TokenAdmin.set_authorization_header('bearer', token)
+		headers = tokenAdmin.set_authorization_header('bearer', token)
 		# headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
 		try:
 			post_data = {"name": form.data['nome'], "value": form.data['valor_venda'], "cost": form.data['valor_custo'], "code": form.data['codigo']}
