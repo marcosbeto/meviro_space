@@ -99,17 +99,7 @@ class InterfaceTokenAdmin:
 		return token_content_json['access_token']
 
 
-	def requisitar_autenticacao_inicial(self, request):
-		#TODO: tratar excessões
-		# try:
-		if request.method == 'GET':
-			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
-			url = endpoint.format(REDIRECT_URI=settings.REDIRECT_URI, CLIENT_ID=settings.CA_CLIENT_ID, STATE=settings.CA_STATE_CODE)
-			return HttpResponseRedirect(url)
-		# 	else:
-		# 		return 'error'	
-		# except:
-		# 	return 'error'
+	
 
 
 	def acessar_auth_token(self, request, code):
@@ -143,7 +133,7 @@ class TokenAdmin(admin.ModelAdmin):
 	def get_urls(self):
 		urls = super().get_urls()
 		my_urls = [
-			path('requisitar_autenticacao_inicial/', self.admin_site.admin_view(InterfaceTokenAdmin.requisitar_autenticacao_inicial), name='requisitar_autenticacao_inicial'),
+			path('requisitar_autenticacao_inicial/', self.admin_site.admin_view(self.requisitar_autenticacao_inicial), name='requisitar_autenticacao_inicial'),
 			path('atualizar_token/', self.admin_site.admin_view(self.action_atualizar_token), name='atualizar_token'),
 		]
 	    
@@ -185,7 +175,17 @@ class TokenAdmin(admin.ModelAdmin):
 		return HttpResponseRedirect(url)
 
 
-	
+	def requisitar_autenticacao_inicial(self, request):
+		#TODO: tratar excessões
+		# try:
+		if request.method == 'GET':
+			endpoint = 'https://api.contaazul.com/auth/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&scope=sales&state={STATE}'
+			url = endpoint.format(REDIRECT_URI=settings.REDIRECT_URI, CLIENT_ID=settings.CA_CLIENT_ID, STATE=settings.CA_STATE_CODE)
+			return HttpResponseRedirect(url)
+		# 	else:
+		# 		return 'error'	
+		# except:
+		# 	return 'error'
 
 
 	def changelist_view(self, request, extra_context=None):
