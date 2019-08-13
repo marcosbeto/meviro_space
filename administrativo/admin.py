@@ -50,7 +50,7 @@ class PacoteAdmin(admin.ModelAdmin):
 			# content = response.content
 			# content_json = json.loads(content.decode("utf-8"))
 
-			response_content_json = TokenAdmin.request_contaazul('update_service', "https://api.contaazul.com/v1/services", None, json.dumps(post_data), headers)
+			response_content_json = tokenAdmin.request_contaazul('update_service', "https://api.contaazul.com/v1/services", None, json.dumps(post_data), headers)
 
 			_mutable = form.data._mutable
 			form.data._mutable = True
