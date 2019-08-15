@@ -214,7 +214,7 @@ class TokenAdmin(admin.ModelAdmin):
 	    extra_context = {'code': code, 'access_token': access_token, 'refresh_token': refresh_token} 
 
 	    if (code):
-	    	self.acessar_auth_token(request, code)
+	    	interfaceToken.acessar_auth_token(request, code)
 
 	    return super(TokenAdmin, self).changelist_view(request, extra_context=extra_context)
 	    
