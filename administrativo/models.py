@@ -60,7 +60,7 @@ class Pacote(models.Model):
 	nome = models.CharField(max_length=60, verbose_name="Nome do Pacote", help_text="Pacote de Assinaturas, Cursos ou Outras Atividades.")
 	valor_venda = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Valor de Venda")
 	valor_custo = models.DecimalField(max_digits=6, decimal_places=2, verbose_name="Valor de Custo")
-	codigo = models.CharField(max_length=50, blank=True, null=True, verbose_name="Código", default="PACOTE_MV_ADMIN")	
+	codigo = models.CharField(max_length=50, blank=True, null=True, verbose_name="Código", default="MV_ADMIN")	
 
 	descricao = models.TextField(verbose_name="Descrição do Pacote", null=True)
 	data_implantacao = models.DateField(verbose_name="Data da Implantação", null=True)
