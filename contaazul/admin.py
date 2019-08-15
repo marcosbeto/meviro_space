@@ -69,6 +69,18 @@ class InterfaceToken:
 				request_response = requests.request("POST", url, data=data, headers=headers)
 			except:
 				return 'error'
+		elif type == 'get_sales_per_user' or type == 'get_items_per_sales':
+			try:
+				# requests.request(method="PUT", url="https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
+				request_response = requests.request("GET", url, params=params, headers=headers)
+			except:
+				return 'error'
+		elif type == 'get_items_per_sales':
+			try:
+				# requests.request(method="PUT", url="https://api.contaazul.com/v1/services/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
+				request_response = requests.request("GET", url, params=params, headers=headers)
+			except:
+				return 'error'
 
 		token_content_json = json.loads(request_response.content.decode("utf-8"))
 

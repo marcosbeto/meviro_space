@@ -70,21 +70,21 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 	def atualizar_pacotes_usuario(self, request, id_contaazul):
 
 		token = self.interfaceToken.atualizar_token()
-
-		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
+		headers = self.interfaceToken.set_authorization_header('bearer', token)
 		params = {"customer_id": id_contaazul, "status": "COMMITTED"}
-		response = requests.request(method="GET", url="https://api.contaazul.com/v1/sales", params=params, headers=headers)
-		all_sales = response.content
-		all_sales_json = json.loads(all_sales.decode("utf-8"))
-		
+
+		all_sales_json = self.interfaceToken.request_contaazul('get_sales_per_user', "https://api.contaazul.com/v1/sales", params, None, headers)
 		message = ""
 
 		for sale in all_sales_json:
 			
 			params_sale = {"id": sale['id']}
-			response_sale = requests.request(method="GET", url="https://api.contaazul.com/v1/sales/%s/items" % sale['id'], params=params_sale, headers=headers)
-			items_sale = response_sale.content
-			items_sale_json = json.loads(items_sale.decode("utf-8"))
+
+			items_sale_json = self.interfaceToken.request_contaazul('get_items_per_sales', "https://api.contaazul.com/v1/sales/%s/items" % sale['id'], params_sale, None, headers)
+
+			# response_sale = requests.request(method="GET", url="https://api.contaazul.com/v1/sales/%s/items" % sale['id'], params=params_sale, headers=headers)
+			# items_sale = response_sale.content
+			# items_sale_json = json.loads(items_sale.decode("utf-8"))
 			
 			array_id_pacotes_por_usuario = []
 
