@@ -17,14 +17,6 @@ from django import forms
 from .models import Pacote, Contrato, PeriodosReservaRecurso, Regra
 from contaazul.admin import TokenAdmin, InterfaceToken
 
-# class TipoAssinaturaAdmin(admin.ModelAdmin):
-#     list_display = ('nome', 'periodo')
-    
-#     def changelist_view(self, request, extra_context=None):
-#         extra_context = {'title': 'Lista dos tipos de assinatura'}
-#         return super(TipoAssinaturaAdmin, self).changelist_view(request, extra_context=extra_context)
-
-
 class PacoteAdmin(admin.ModelAdmin):
 	search_fields = ['nome']
 	filter_horizontal = ('regra', 'contrato', 'curso','outraAtividade')
