@@ -27,9 +27,6 @@ class ActiveFilterForm(forms.Form):
 
 class InterfaceToken:
 
-	def __init__(self):
-		print("Starting InterfaceToken")
-
 	def set_authorization_header(self, type_authorization, token):
 		headers = {}
 		if type_authorization == 'basic':
