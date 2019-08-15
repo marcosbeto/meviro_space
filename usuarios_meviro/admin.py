@@ -40,29 +40,22 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		#TODO: tratar excecoes
 		token = self.interfaceToken.atualizar_token()
 
-		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
+		headers = self.interfaceToken.set_authorization_header('bearer', token)
 		post_data = {"name": form.data['primeiro_nome'], "person_type":"NATURAL"}
-		
+
 		if form.data['id_contaazul']:
-			#TODO: Colocar requests do conta AZUL em outro metodo (/contaazul)
-			response = requests.request(method="PUT", url="https://api.contaazul.com/v1/customers/%s" % form.data['id_contaazul'], data=json.dumps(post_data), headers=headers)
-			content = response.content
-			#TODO: tratar excecoes
-			messages.success(request, "Atualizando %s" % content)
+			response_content_json = self.interfaceToken.request_contaazul('update_user', "https://api.contaazul.com/v1/customers/%s" % form.data['id_contaazul'], None, json.dumps(post_data), headers)
+			messages.success(request, "Atualizando %s" % str(response_content_json))
 		else:
-			#TODO: Colocar requests do conta AZUL em outro metodo (/contaazul)
-			response = requests.request(method="POST", url="https://api.contaazul.com/v1/customers", data=json.dumps(post_data), headers=headers)
-			content = response.content
-			#TODO: tratar excecoes
-			content_json = json.loads(content.decode("utf-8"))
-			id_contaazul = content_json['id']
+			response_content_json = self.interfaceToken.request_contaazul('save_user', "https://api.contaazul.com/v1/customers", None, json.dumps(post_data), headers)
+
+			id_contaazul = response_content_json['id']
 			_mutable = form.data._mutable
 			form.data._mutable = True
 			form.data['id_contaazul'] = id_contaazul
 			obj.id_contaazul = id_contaazul
 			form.data._mutable = _mutable
-			#TODO: melhorar modelo de mensagens de resposta e excecoes
-			messages.success(request, "Inserindo novo %s" % content)
+			messages.success(request, "Inserindo novo %s" % str(response_content_json))
 
 		super(UsuarioEspacoAdmin, self).save_model(request, obj, form, change)
 	
@@ -74,29 +67,21 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		params = {"customer_id": id_contaazul, "status": "COMMITTED"}
 
 		all_sales_json = self.interfaceToken.request_contaazul('get_sales_per_user', "https://api.contaazul.com/v1/sales", params, None, headers)
-		message = ""
 
 		for sale in all_sales_json:
 			
 			params_sale = {"id": sale['id']}
-
 			items_sale_json = self.interfaceToken.request_contaazul('get_items_per_sales', "https://api.contaazul.com/v1/sales/%s/items" % sale['id'], params_sale, None, headers)
-
-			# response_sale = requests.request(method="GET", url="https://api.contaazul.com/v1/sales/%s/items" % sale['id'], params=params_sale, headers=headers)
-			# items_sale = response_sale.content
-			# items_sale_json = json.loads(items_sale.decode("utf-8"))
-			
 			array_id_pacotes_por_usuario = []
 
 			for item in items_sale_json:
 				id_pacote = json.dumps(item['item']['id']).strip('"')
 				array_id_pacotes_por_usuario.append(id_pacote)
-				
 
 			PacotePorUsuarioAdmin.salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, sale['id'], sale['emission'])
 		
 		
-		messages.success(request, "Lista %s" % message)
+		messages.success(request, "Pacotes atualizados")
 		url_base = reverse('admin:usuarios_meviro_usuarioespaco_changelist',)
 		return HttpResponseRedirect(url_base);
 
@@ -167,7 +152,7 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
 	    			pacote_por_usuario.save()
 	    	except:
 	    		#TODO: melhorar o tratamento de excecao
-	    		return True
+	    		return messages.error(request, 'Não foi possível atualizar os pacotes do usuário com id=' + str(id_usuario))
 
 	    
 admin.site.site_header = "Espaço MeViro"
