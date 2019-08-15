@@ -32,9 +32,10 @@ class PacoteAdmin(admin.ModelAdmin):
     
 	def save_model(self, request, obj, form, change):
 		#Todo: tratar excecoes
-		token = self.interfaceToken.atualizar_token()
-		headers = self.interfaceToken.set_authorization_header('bearer', token)
 		try:
+			token = self.interfaceToken.atualizar_token()
+			headers = self.interfaceToken.set_authorization_header('bearer', token)
+		
 			post_data = {"name": form.data['nome'], "value": form.data['valor_venda'], "cost": form.data['valor_custo'], "code": form.data['codigo']}
 		
 			if form.data['id_contaazul']: #atualizando pacote
