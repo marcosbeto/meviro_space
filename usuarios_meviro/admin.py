@@ -18,7 +18,7 @@ from django import forms
 
 from .models import UsuarioEspaco, Agendamento, PacotePorUsuario, CreditoPorUsuario
 from administrativo.models import Pacote
-from contaazul.admin import TokenAdmin
+from contaazul.admin import TokenAdmin, InterfaceToken
 
 
 class UsuarioEspacoAdmin(admin.ModelAdmin):
@@ -28,6 +28,8 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 	actions = ['record_rfid', 'atualizar_pacotes_usuario']
 	search_fields = ['primeiro_nome', 'sobrenome', 'email']
 	filter_horizontal = ('treinamentoEmEquipamentos', )
+	interfaceToken = InterfaceToken()
+
 	
 	def changelist_view(self, request, extra_context=None):
 		extra_context = {'title': 'Lista de todos os usuários do espaço'}
@@ -36,7 +38,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 
 	def save_model(self, request, obj, form, change):
 		#TODO: tratar excecoes
-		token = TokenAdmin.atualizar_token(None)
+		token = self.interfaceToken.atualizar_token()
 
 		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
 		post_data = {"name": form.data['primeiro_nome'], "person_type":"NATURAL"}
@@ -67,7 +69,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 	
 	def atualizar_pacotes_usuario(self, request, id_contaazul):
 
-		token = TokenAdmin.atualizar_token(None)
+		token = self.interfaceToken.atualizar_token()
 
 		headers={'Authorization': 'Bearer %s' % token, "Content-Type": "application/json"}
 		params = {"customer_id": id_contaazul, "status": "COMMITTED"}
