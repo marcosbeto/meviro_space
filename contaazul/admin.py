@@ -25,61 +25,10 @@ class ActiveFilterForm(forms.Form):
     code = forms.CharField()
     state = forms.CharField()
 
-class TokenAdmin(admin.ModelAdmin):
-	search_fields = ['token']
+class InterfaceToken:
 
-	advanced_search_form = ActiveFilterForm()
-	change_list_template = "admin/contaazul/token/change_list.html"
-	actions = ['requisitar_autenticacao_inicial', 'atualizar_token']
-	
-	def __init__(self, *args, **kwargs):
-		super(TokenAdmin, self).__init__(*args, **kwargs)
-		self.atualizar_token()
-
-	def get_urls(self):
-		urls = super().get_urls()
-		my_urls = [
-			path('requisitar_autenticacao_inicial/', self.admin_site.admin_view(self.requisitar_autenticacao_inicial), name='requisitar_autenticacao_inicial'),
-			path('atualizar_token/', self.admin_site.admin_view(self.action_atualizar_token), name='atualizar_token'),
-		]
-	    
-		return my_urls + urls
-
-	#BEGIN: Metodos para tratamento de requisições
-
-	def get_changelist(self, request, **kwargs):
-
-	    from django.contrib.admin.views.main import ChangeList
-	    code = self.other_search_fields.get('code',None)
-	    
-	    class ActiveChangeList(ChangeList):
-	    	def get_query_set(self, *args, **kwargs):
-	    		now = datetime.datetime.now()
-	    		qs = super(ActiveChangeList, self).get_query_set(*args, **kwargs)
-	    		return qs.filter((Q(start_date=None) | Q(start_date__lte=now))
-					& (Q(end_date=None) | Q(end_date__gte=now)))
-
-	    if not code is None:
-	    	return ActiveChangeList
-
-	    return ChangeList
-
-
-	def lookup_allowed(self, lookup):
-		if lookup in self.advanced_search_form.fields.keys():
-			return True
-		return super(MyModelAdmin, self).lookup_allowed(lookup)
-
-	#END: Metodos para tratamento de requisições
-
-
-	def action_atualizar_token(self, request):
-		#TODO: tratar excessões
-		token = self.atualizar_token()
-		messages.success(request, 'Token atualizado: %s' % token)
-		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
-		return HttpResponseRedirect(url)
-
+	def __init__(self):
+		print("Starting InterfaceToken")
 
 	def set_authorization_header(self, type_authorization, token):
 		headers = {}
@@ -100,7 +49,6 @@ class TokenAdmin(admin.ModelAdmin):
 			data = {'grant_type': 'authorization_code', 'redirect_uri': settings.REDIRECT_URI , 'code': code}
 
 		return data
-
 
 	def request_contaazul(self, type, url, params, data, headers):
 		if type=='refresh_token':
@@ -129,7 +77,6 @@ class TokenAdmin(admin.ModelAdmin):
 
 		return token_content_json
 
-
 	def atualizar_token(self):
 		#TODO: tratar excessões
 		try:
@@ -150,7 +97,6 @@ class TokenAdmin(admin.ModelAdmin):
 			return 'error'
 
 		return token_content_json['access_token']
-
 
 	def requisitar_autenticacao_inicial(self, request):
 		#TODO: tratar excessões
@@ -185,6 +131,61 @@ class TokenAdmin(admin.ModelAdmin):
 		return HttpResponseRedirect(url)
 
 
+class TokenAdmin(admin.ModelAdmin):
+	search_fields = ['token']
+
+	advanced_search_form = ActiveFilterForm()
+	change_list_template = "admin/contaazul/token/change_list.html"
+	actions = ['requisitar_autenticacao_inicial', 'atualizar_token']
+	interfaceToken = InterfaceToken()
+	
+	def __init__(self,*args, **kwargs):
+		super(TokenAdmin, self).__init__(*args, **kwargs)
+		# self.atualizar_token()
+
+	def get_urls(self):
+		urls = super().get_urls()
+		my_urls = [
+			path('requisitar_autenticacao_inicial/', self.admin_site.admin_view(self.interfaceToken.requisitar_autenticacao_inicial), name='requisitar_autenticacao_inicial'),
+			path('atualizar_token/', self.admin_site.admin_view(self.action_atualizar_token), name='atualizar_token'),
+		]
+	    
+		return my_urls + urls
+
+	#BEGIN: Metodos para tratamento de requisições
+
+	def get_changelist(self, request, **kwargs):
+
+	    from django.contrib.admin.views.main import ChangeList
+	    code = self.other_search_fields.get('code',None)
+	    
+	    class ActiveChangeList(ChangeList):
+	    	def get_query_set(self, *args, **kwargs):
+	    		now = datetime.datetime.now()
+	    		qs = super(ActiveChangeList, self).get_query_set(*args, **kwargs)
+	    		return qs.filter((Q(start_date=None) | Q(start_date__lte=now))
+					& (Q(end_date=None) | Q(end_date__gte=now)))
+
+	    if not code is None:
+	    	return ActiveChangeList
+
+	    return ChangeList
+
+
+	def lookup_allowed(self, lookup):
+		if lookup in self.advanced_search_form.fields.keys():
+			return True
+		return super(MyModelAdmin, self).lookup_allowed(lookup)
+
+	#END: Metodos para tratamento de requisições
+
+	def action_atualizar_token(self, request):
+		#TODO: tratar excessões
+		token = interfaceToken.atualizar_token()
+		messages.success(request, 'Token atualizado: %s' % token)
+		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
+		return HttpResponseRedirect(url)
+
 	def changelist_view(self, request, extra_context=None):
 	    self.other_search_fields = {} 
 	    
@@ -217,5 +218,18 @@ class TokenAdmin(admin.ModelAdmin):
 
 	    return super(TokenAdmin, self).changelist_view(request, extra_context=extra_context)
 	    
+
+# 	    ass ListAdminMixin(object):
+#     def __init__(self, model, admin_site):
+#         self.list_display = [field.name for field in model._meta.fields]
+#         super(ListAdminMixin, self).__init__(model, admin_site)
+
+# models = apps.get_models()
+# for model in models:
+#     admin_class = type('AdminClass', (ListAdminMixin, admin.ModelAdmin), {})
+#     try:
+#         admin.site.register(model, admin_class)
+#     except admin.sites.AlreadyRegistered:
+#         pass
 
 admin.site.register(Token, TokenAdmin)
