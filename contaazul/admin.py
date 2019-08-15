@@ -181,7 +181,7 @@ class TokenAdmin(admin.ModelAdmin):
 
 	def action_atualizar_token(self, request):
 		#TODO: tratar excessões
-		token = interfaceToken.atualizar_token()
+		token = self.interfaceToken.atualizar_token()
 		messages.success(request, 'Token atualizado: %s' % token)
 		url = reverse('admin:%s_%s_changelist' % ('contaazul', 'token'))
 		return HttpResponseRedirect(url)
