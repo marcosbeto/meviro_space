@@ -57,15 +57,15 @@ class UsuarioEspaco(models.Model):
 		 
 
 class PacotePorUsuario(models.Model):
-	usuario = models.ForeignKey(UsuarioEspaco, on_delete=models.DO_NOTHING, verbose_name="Nome do Usuário")
-	pacote = models.ForeignKey(Pacote, on_delete=models.DO_NOTHING, verbose_name="Pacote")
+	usuario = models.ForeignKey(UsuarioEspaco, verbose_name="Nome do Usuário", on_delete=models.CASCADE)
+	pacote = models.ForeignKey(Pacote, verbose_name="Pacote", on_delete=models.CASCADE)
 	ativo = models.BooleanField(default=False, verbose_name="Este plano está ativo?")
 	data_ativacao = models.DateField(blank=True, null=True, verbose_name="Data de Ativação")
 	data_encerramento = models.DateField(blank=True, null=True, verbose_name="Data de Encerramento")
 	id_venda_contaazul = models.CharField(max_length=100, blank=True, null=True, verbose_name="ID Venda ContaAzul")
 
 	def __str__(self):
-		return u'%s contratou %s' % (self.usuario.primeiro_nome, self.pacote.nome)
+		return u'%s contratou  %s' % (self.usuario.primeiro_nome, self.pacote.nome)
 
 	class Meta:
 		verbose_name_plural = "Pacotes por Usuário"
