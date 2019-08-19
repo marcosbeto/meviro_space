@@ -76,9 +76,10 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 
 			for item in items_sale_json:
 				id_pacote = json.dumps(item['item']['id']).strip('"')
+				quantity = json.dumps(item['quantity'])
 				array_id_pacotes_por_usuario.append(id_pacote)
 
-			PacotePorUsuarioAdmin.salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, sale['id'], sale['emission'])
+			PacotePorUsuarioAdmin.salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, sale['id'], sale['emission'], quantity)
 		
 		
 		messages.success(request, "Pacotes atualizados")
@@ -141,14 +142,14 @@ class AgendamentoAdmin(admin.ModelAdmin):
 
 class PacotePorUsuarioAdmin(admin.ModelAdmin): 
 
-    def salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, id_venda, data_venda):
+    def salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, id_venda, data_venda, quantity):
     	
     	for id_pacote_por_usuario in array_id_pacotes_por_usuario:
     		usuario_espaco = UsuarioEspaco.objects.get(id_contaazul=id_contaazul)
     		pacote = Pacote.objects.get(id_contaazul=id_pacote_por_usuario)
     		pacote_por_usuario_database = PacotePorUsuario.objects.filter(usuario=usuario_espaco, pacote=pacote, id_venda_contaazul=id_venda)
     		if not pacote_por_usuario_database:
-    			pacote_por_usuario = PacotePorUsuario(usuario=usuario_espaco,pacote=pacote,ativo=False,data_ativacao=None,data_encerramento=None,id_venda_contaazul=id_venda)
+    			pacote_por_usuario = PacotePorUsuario(usuario=usuario_espaco,pacote=pacote,ativo=False,data_ativacao=None,data_encerramento=None,id_venda_contaazul=id_venda, quantidade=quantity)
     			pacote_por_usuario.save()
 	    	# except:
 	    		#TODO: melhorar o tratamento de excecao

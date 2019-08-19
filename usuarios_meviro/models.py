@@ -63,6 +63,7 @@ class PacotePorUsuario(models.Model):
 	data_ativacao = models.DateField(blank=True, null=True, verbose_name="Data de Ativação")
 	data_encerramento = models.DateField(blank=True, null=True, verbose_name="Data de Encerramento")
 	id_venda_contaazul = models.CharField(max_length=100, blank=True, null=True, verbose_name="ID Venda ContaAzul")
+	quantidade = models.IntegerField(blank=True, null=True, verbose_name="Quantidade")
 
 	def __str__(self):
 		return u'%s contratou  %s' % (self.usuario.primeiro_nome, self.pacote.nome)
