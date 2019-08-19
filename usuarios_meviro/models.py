@@ -58,7 +58,7 @@ class UsuarioEspaco(models.Model):
 
 class PacotePorUsuario(models.Model):
 	usuario = models.ForeignKey(UsuarioEspaco, verbose_name="Nome do Usuário", on_delete=models.CASCADE)
-	pacote = models.ForeignKey(Pacote, verbose_name="Pacote", on_delete=models.CASCADE)
+	pacote = models.ForeignKey(Pacote, 	verbose_name="Pacote", on_delete=models.CASCADE)
 	ativo = models.BooleanField(default=False, verbose_name="Este plano está ativo?")
 	data_ativacao = models.DateField(blank=True, null=True, verbose_name="Data de Ativação")
 	data_encerramento = models.DateField(blank=True, null=True, verbose_name="Data de Encerramento")
@@ -72,8 +72,8 @@ class PacotePorUsuario(models.Model):
 		verbose_name = "Pacote por Usuário"
 
 class CreditoPorUsuario(models.Model):
-	usuario = models.ForeignKey(UsuarioEspaco, on_delete=models.DO_NOTHING, verbose_name="Nome do Usuário")
-	numero_creditos = models.ForeignKey(Pacote, on_delete=models.DO_NOTHING, verbose_name="Pacote")
+	usuario = models.ForeignKey(UsuarioEspaco, on_delete=models.CASCADE, verbose_name="Nome do Usuário")
+	numero_creditos = models.ForeignKey(Pacote, on_delete=models.CASCADE, verbose_name="Pacote")
 	is_active = models.BooleanField(default=False, verbose_name="Este plano está ativo?")
 	data_compra = models.DateField(blank=True, null=True, verbose_name="Data de Ativação")
 	data_encerramento = models.DateField(blank=True, null=True, verbose_name="Data de Encerramento")

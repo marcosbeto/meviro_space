@@ -83,7 +83,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		
 		messages.success(request, "Pacotes atualizados")
 		url_base = reverse('admin:usuarios_meviro_usuarioespaco_changelist',)
-		return HttpResponseRedirect(url_base);
+		return HttpResponseRedirect(url_base)
 
 	def record_rfid(self, request, id_usuario):
 		
@@ -126,6 +126,7 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		my_urls = [
 			path('record_rfid/<int:id_usuario>/', self.admin_site.admin_view(self.record_rfid), name='record_rfid'),
 			path('atualizar_pacotes_usuario/<str:id_contaazul>/', self.admin_site.admin_view(self.atualizar_pacotes_usuario), name='atualizar_pacotes_usuario'),
+			# path('atualizar_creditos_usuario/<str:id_contaazul>/', self.admin_site.admin_view(self.atualizar_creditos_usuario), name='atualizar_creditos_usuario'),
 		]
 
 		return my_urls + urls
@@ -143,16 +144,15 @@ class PacotePorUsuarioAdmin(admin.ModelAdmin):
     def salvar_pacote_por_usuario_contaazul(id_contaazul, array_id_pacotes_por_usuario, id_venda, data_venda):
     	
     	for id_pacote_por_usuario in array_id_pacotes_por_usuario:
-    		try:
-    			usuario_espaco = UsuarioEspaco.objects.get(id_contaazul=id_contaazul)
-	    		pacote = Pacote.objects.get(id_contaazul=id_pacote_por_usuario)
-	    		pacote_por_usuario_database = PacotePorUsuario.objects.filter(usuario=usuario_espaco, pacote=pacote, id_venda_contaazul=id_venda)
-	    		if not pacote_por_usuario_database:
-	    			pacote_por_usuario = PacotePorUsuario(usuario=usuario_espaco,pacote=pacote,ativo=False,data_ativacao=None,data_encerramento=None,id_venda_contaazul=id_venda)
-	    			pacote_por_usuario.save()
-	    	except:
+    		usuario_espaco = UsuarioEspaco.objects.get(id_contaazul=id_contaazul)
+    		pacote = Pacote.objects.get(id_contaazul=id_pacote_por_usuario)
+    		pacote_por_usuario_database = PacotePorUsuario.objects.filter(usuario=usuario_espaco, pacote=pacote, id_venda_contaazul=id_venda)
+    		if not pacote_por_usuario_database:
+    			pacote_por_usuario = PacotePorUsuario(usuario=usuario_espaco,pacote=pacote,ativo=False,data_ativacao=None,data_encerramento=None,id_venda_contaazul=id_venda)
+    			pacote_por_usuario.save()
+	    	# except:
 	    		#TODO: melhorar o tratamento de excecao
-	    		return messages.error(request, 'Não foi possível atualizar os pacotes do usuário com id=' + str(id_usuario))
+	    		# return messages.error(request, 'Não foi possível atualizar os pacotes do usuário com id=' + str(id_usuario))
 
 	    
 admin.site.site_header = "Espaço MeViro"
