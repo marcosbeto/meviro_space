@@ -83,4 +83,5 @@ def authorize_bridge(request, id_arduino, id_usuario):
     log_uso_ferramenta = LogUsoFerramentaUsuario(id_usuario=usuario, id_bridge=brigde_recurso)
     log_uso_ferramenta.save()
     print('chegamo aqui')
-    return JsonResponse({'auth': True});
+    return Response({'auth': True},
+                    status=HTTP_200_OK) #JsonResponse({'auth': True});
