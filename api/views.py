@@ -13,8 +13,9 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 from rest_framework.response import Response
-from infra.models import Bridge #, SecaoAssinatura
-from usuarios_meviro.models import UsuarioEspaco
+from infra.models import Bridge, Recurso #, SecaoAssinatura
+from usuarios_meviro.models import UsuarioEspaco, PacotePorUsuario
+from administrativo.models import Pacote, Regra
 from logs.models import LogUsoFerramentaUsuario
 #END: imports related to api authentication
 
@@ -45,11 +46,30 @@ def authorize_bridge(request, id_arduino, id_usuario):
     id_recurso = bridge_recurso.id_recurso.id
 
     usuario = UsuarioEspaco.objects.get(id=id_usuario)
+
+    pacotesPorUsuario = PacotePorUsuario.objects.filter(id_usuario=usuario.id_usuario)
+
+    autorizado = False;
+
+    for pacotePorUsuario in pacotesPorUsuario:
+        pacote = pacotePorUsuario.pacote
+        pacoteObject = Pacote.objects.get(id=pacote.id)
+        regras = pacoteObject.regra
+        for regra in regras:
+            regraObject = Regra.objects.get(id=regra.id)
+            recursos = regraObject.recursos
+            for recurso in recursos:
+                recursoObject = Recurso.objects.get(id=regra.id)
+                if recursoObject.id == id_recurso:
+                    autorizado = True;
+                    break;
+
+
     
-    secao_assinaturas = None#SecaoAssinatura.objects.filter(id_assinatura=usuario.tipo_assinatura_id, id_secao=id_secao)
+    # secao_assinaturas = SecaoAssinatura.objects.filter(id_assinatura=usuario.tipo_assinatura_id, id_secao=id_secao)
 
 
-    if (not secao_assinaturas):
+    if (not autorizado):
         return JsonResponse({'auth': False});
     
     bridge = Bridge.objects.get(id=id_bridge)
