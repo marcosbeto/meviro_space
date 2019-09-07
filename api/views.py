@@ -38,29 +38,36 @@ def api_login(request): #this method will return the token, if valid
                     status=HTTP_200_OK)
 
 def authorize_bridge(request, id_arduino, id_usuario):
+   
+    print("  tamaqui")
+    brigde_recurso = None
     try:
-        brigde_recurso = id_bridge#BridgeAuth.objects.get(id_bridge=id_bridge)
+        brigde_recurso = Bridge.objects.get(recurso_id=id_arduino)
     except:
         return JsonResponse({'auth': False});
     
-    id_recurso = bridge_recurso.id_recurso.id
+    id_recurso = brigde_recurso.recurso_id
 
     usuario = UsuarioEspaco.objects.get(id=id_usuario)
 
-    pacotesPorUsuario = PacotePorUsuario.objects.filter(id_usuario=usuario.id_usuario)
+    pacotesPorUsuario = PacotePorUsuario.objects.filter(usuario=usuario.id)
 
     autorizado = False;
 
+    print(pacotesPorUsuario)
+
     for pacotePorUsuario in pacotesPorUsuario:
         pacote = pacotePorUsuario.pacote
+        print(pacote)
         pacoteObject = Pacote.objects.get(id=pacote.id)
-        regras = pacoteObject.regra
+        regras = pacoteObject.regra.all()
         for regra in regras:
             regraObject = Regra.objects.get(id=regra.id)
-            recursos = regraObject.recursos
+            recursos = regraObject.recurso.all()
             for recurso in recursos:
-                recursoObject = Recurso.objects.get(id=regra.id)
+                recursoObject = Recurso.objects.get(id=recurso.id)
                 if recursoObject.id == id_recurso:
+                    print("autorizado")
                     autorizado = True;
                     break;
 
@@ -72,8 +79,8 @@ def authorize_bridge(request, id_arduino, id_usuario):
     if (not autorizado):
         return JsonResponse({'auth': False});
     
-    bridge = Bridge.objects.get(id=id_bridge)
-    log_uso_ferramenta = LogUsoFerramentaUsuario(id_usuario=usuario, id_bridge=bridge)
+    # bridge = Bridge.objects.get(id=brigde_recurso.id)
+    log_uso_ferramenta = LogUsoFerramentaUsuario(id_usuario=usuario, id_bridge=brigde_recurso)
     log_uso_ferramenta.save()
-
+    print('chegamo aqui')
     return JsonResponse({'auth': True});
