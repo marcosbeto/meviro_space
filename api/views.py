@@ -120,10 +120,10 @@ def get_bridge_authorization_id_usuarios(request, id_arduino):
     
     usuarios_autorizados_por_bridge = usuarios_autorizados_por_bridge + "]"
 
-    file_path = 'info_files' + '/info.txt'
-    with open(file_path, 'w') as text_file:
-        myfile = File(text_file)
-        myfile.write(usuarios_autorizados_por_bridge)
+    # file_path = 'info_files' + '/info.txt'
+    # with open(file_path, 'w') as text_file:
+    #     myfile = File(text_file)
+    #     myfile.write(usuarios_autorizados_por_bridge)
     
     filename = "info.txt"
     content = usuarios_autorizados_por_bridge

@@ -49,13 +49,17 @@ class UsuarioEspacoAdmin(admin.ModelAdmin):
 		else:
 			response_content_json = self.interfaceToken.request_contaazul('save_user', "https://api.contaazul.com/v1/customers", None, json.dumps(post_data), headers)
 
-			id_contaazul = response_content_json['id']
-			_mutable = form.data._mutable
-			form.data._mutable = True
-			form.data['id_contaazul'] = id_contaazul
-			obj.id_contaazul = id_contaazul
-			form.data._mutable = _mutable
-			messages.success(request, "Inserindo novo %s" % str(response_content_json))
+			print("*******************")
+			print(response_content_json)
+			print("*******************")
+			if (response_content_json!="error"):
+				id_contaazul = response_content_json['id']
+				_mutable = form.data._mutable
+				form.data._mutable = True
+				form.data['id_contaazul'] = id_contaazul
+				obj.id_contaazul = id_contaazul
+				form.data._mutable = _mutable
+				messages.success(request, "Inserindo novo %s" % str(response_content_json))
 
 		super(UsuarioEspacoAdmin, self).save_model(request, obj, form, change)
 	
