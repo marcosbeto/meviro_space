@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     # path('', include(router.urls)),
@@ -12,5 +14,5 @@ urlpatterns = [
     path('infra/', include('infra.urls')),
     # path('administrativo/', include('administrativo.urls')),
     # path('financeiro/', include('financeiro.urls')),
-   
-]
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -5,7 +5,7 @@ from usuarios_meviro.views import UsuarioEspacoViewSet
 from administrativo.views import PacoteViewSet, ContratoViewSet, PeriodosReservaRecursoViewSet, RegraViewSet
 from infra.views import RecursoViewSet
 from logs.views import LogAcessoEspacoUsuarioViewSet, LogUsoFerramentaUsuarioViewSet
-from api.views import api_login, authorize_bridge
+from api.views import api_login, authorize_bridge, get_bridge_authorization_id_usuarios
 
 router = routers.DefaultRouter()
 router.register(r'u suarios_meviro', UsuarioEspacoViewSet)
@@ -122,7 +122,8 @@ urlpatterns = [
     # path('log_uso/detail/<int:pk>/', log_uso_detail, name='log-uso-detail'),
     path('log_uso/add/', log_uso_add, name='log-uso-add'),
     # path('log_uso/update/<int:pk>/update/', log_uso_update, name='log-uso-update')
-    path('p/<int:id_arduino>/<int:id_usuario>', authorize_bridge)
+    path('p/<int:id_arduino>/<int:id_usuario>', authorize_bridge),
+    path('g/<int:id_arduino>', get_bridge_authorization_id_usuarios)
     
   # END: API PATHS
 

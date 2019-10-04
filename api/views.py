@@ -17,6 +17,11 @@ from infra.models import Bridge, Recurso #, SecaoAssinatura
 from usuarios_meviro.models import UsuarioEspaco, PacotePorUsuario
 from administrativo.models import Pacote, Regra
 from logs.models import LogUsoFerramentaUsuario
+from django.core import files
+from django.conf import settings
+from django.core.files import File
+from django.http import HttpResponse
+
 #END: imports related to api authentication
 
 @csrf_exempt
@@ -39,7 +44,6 @@ def api_login(request): #this method will return the token, if valid
 
 def authorize_bridge(request, id_arduino, id_usuario):
    
-    print("  tamaqui")
     brigde_recurso = None
     try:
         brigde_recurso = Bridge.objects.get(recurso_id=id_arduino)
@@ -54,8 +58,6 @@ def authorize_bridge(request, id_arduino, id_usuario):
 
     autorizado = False;
 
-    print(pacotesPorUsuario)
-
     for pacotePorUsuario in pacotesPorUsuario:
         pacote = pacotePorUsuario.pacote
         print(pacote)
@@ -67,14 +69,8 @@ def authorize_bridge(request, id_arduino, id_usuario):
             for recurso in recursos:
                 recursoObject = Recurso.objects.get(id=recurso.id)
                 if recursoObject.id == id_recurso:
-                    print("autorizado")
                     autorizado = True;
                     break;
-
-
-    
-    # secao_assinaturas = SecaoAssinatura.objects.filter(id_assinatura=usuario.tipo_assinatura_id, id_secao=id_secao)
-
 
     if (not autorizado):
         return JsonResponse({'auth': False});
@@ -82,5 +78,58 @@ def authorize_bridge(request, id_arduino, id_usuario):
     # bridge = Bridge.objects.get(id=brigde_recurso.id)
     log_uso_ferramenta = LogUsoFerramentaUsuario(id_usuario=usuario, id_bridge=brigde_recurso)
     log_uso_ferramenta.save()
-    print('chegamo aqui')
+    
     return JsonResponse({'auth': True});
+
+
+
+def file_upload(request):
+    save_path = os.path.join(settings.MEDIA_ROOT, 'uploads', request.FILES['file'])
+    path = default_storage.save(save_path, request.FILES['file'])
+    return default_storage.path(path)
+
+def get_bridge_authorization_id_usuarios(request, id_arduino):
+   
+    brigde_recurso = Bridge.objects.get(recurso_id=id_arduino)
+    id_recurso = brigde_recurso.recurso_id
+
+    usuarios = UsuarioEspaco.objects.values_list('id', flat=True)
+    usuarios_autorizados_por_bridge = "["
+    usuario = None
+    for usuario in usuarios:
+        autorizado = False
+        
+        pacotesPorUsuario = PacotePorUsuario.objects.filter(usuario=usuario)
+        for pacotePorUsuario in pacotesPorUsuario:
+            pacote = pacotePorUsuario.pacote
+            pacoteObject = Pacote.objects.get(id=pacote.id)
+            regras = pacoteObject.regra.all()
+            for regra in regras:
+                regraObject = Regra.objects.get(id=regra.id)
+                recursos = regraObject.recurso.all()
+                for recurso in recursos:
+                    recursoObject = Recurso.objects.get(id=recurso.id)
+                    if recursoObject.id == id_recurso:
+                        autorizado = True;
+                        usuarios_autorizados_por_bridge = usuarios_autorizados_por_bridge + str(usuario) + ';' 
+                        break
+                if autorizado:
+                    break
+            if autorizado:
+                break
+    
+    usuarios_autorizados_por_bridge = usuarios_autorizados_por_bridge + "]"
+
+    file_path = 'info_files' + '/info.txt'
+    with open(file_path, 'w') as text_file:
+        myfile = File(text_file)
+        myfile.write(usuarios_autorizados_por_bridge)
+    
+    filename = "info.txt"
+    content = usuarios_autorizados_por_bridge
+    response = HttpResponse(content, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+    return response
+
+    
+    
