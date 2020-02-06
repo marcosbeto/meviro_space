@@ -73,8 +73,11 @@ class Pacote(models.Model):
 	valor_periodo_minimo = models.IntegerField(blank=True, null=True, verbose_name="Quantidade Período Mínimo")
 
 	observacoes	= models.TextField(blank=True, verbose_name="Observações", null=True)
+
 	pode_agendar_maquinas = models.BooleanField(default=False, verbose_name="Pode realizar agendamentos?",)
-	
+	is_responsavel = models.BooleanField(default=False, verbose_name="É responsável por alguém que usara o espaço?",)
+	responsavel_por = models.CharField(max_length=256, null=True, verbose_name="Reponsável por", blank=True,)
+
 	assinantes_tem_desconto_recurso = models.BooleanField(default=False, verbose_name="Assinantes tem desconto para utilização dos recursos?",)
 	desconto_recurso_percentual = models.IntegerField(blank=True, null=True, verbose_name="Desconto percentual por recurso")
 	desconto_recurso_valor = models.DecimalField(max_digits=6, blank=True, null=True, decimal_places=2, verbose_name="Desconto integral por recurso")
@@ -84,7 +87,6 @@ class Pacote(models.Model):
 	outraAtividade = models.ManyToManyField(OutraAtividade, verbose_name="Alguma outra atividade relacionada?", blank=True)
 	id_contaazul = models.CharField(max_length=200, blank=True, null=True, verbose_name="ID Conta Azul")
 	
-
 	def __str__(self):
 		return u'%s' % (self.nome)
 

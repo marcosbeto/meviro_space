@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Fornecedor, Recurso, Bridge
+from .models import Fornecedor, Recurso, Bridge, Area
 
 
 class InfraAdminSite(admin.AdminSite):
@@ -38,6 +38,7 @@ class BridgeAdmin(admin.ModelAdmin):
 # admin_site = InfraAdminSite(name='infra')
 
 admin.site.register(Fornecedor)
+admin.site.register(Area)
 admin.site.register(Recurso, RecursoAdmin)
 admin.site.register(Bridge, BridgeAdmin)
 # admin.site.register(BridgeAuth, BridgeAuthAdmin)

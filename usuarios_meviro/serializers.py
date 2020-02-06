@@ -10,6 +10,7 @@ class UsuarioEspacoSerializer(serializers.HyperlinkedModelSerializer):
 					'treinamentoEmEquipamentos',
 					'primeiro_nome',
 					'sobrenome',
+					'razao_visita',
 					'data_nascimento',
 					'email',
 					'endereco',

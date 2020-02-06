@@ -6,19 +6,64 @@ from meviro_space import constants
 from administrativo.models import Pacote, Contrato
 from infra.models import Recurso
 from educacao.models import TreinamentoEmEquipamento
+from multiselectfield import MultiSelectField
 
 
 class UsuarioEspaco(models.Model):
+	
+	PARA_QUEM_CONSTRUIR = [
+	    ('propria', 'Para o próprio usuário.'),
+	    ('contratante', 'Para um contratante'),
+	    ('empregador', 'Para um empregador '),
+		('outros', 'Outros')
+	]
+
+	RAZAO_VISITA = [
+	    ('reuniao', 'Reunião'),
+		('tour_agendado', 'Tour Agendado'),
+		('tour_nao_agendado', 'Tour não agendado'),
+		('visita_parceiro', 'Visita Parceiro'),
+		('curso_atividade', 'Participar de uma Atividade'),
+		('atividade_terceiros', 'Atividade de Terceiros'),
+		('visita_parceiro', 'Visita Parceiro'),
+		( 'uso_maquinas', 'Uso do Espaço'),
+		('outros', 'Outros')
+	]
+
+	TODOS_INTERESSES = (('marcenaria', 'Marcenaria'),
+              ('eletronica', 'Eletrônica'),
+              ('impressao3D', 'Impressão 3D'),
+              ('serralheria', 'Serralheria'),
+              ('cortadora_laser', 'Cortarora Laser'),
+              ('cnc', 'CNC'),
+              ('cultura_maker', 'Cultura Maker'),
+              ('atividades_impacto', 'Atividades de Impacto Socio Ambiental'),
+              ('inclusao_pcds', 'Inclusão de PCDs'))
 
 	primeiro_nome = models.CharField(max_length=30, verbose_name="Primeiro nome")
 	sobrenome = models.CharField(max_length=200, verbose_name="Sobrenomes")
+	razao_visita = models.CharField(max_length=30, choices=RAZAO_VISITA, null=True, verbose_name="Razão da Visita")
 	cpf = models.CharField(max_length=30, verbose_name="CPF")
 	rg = models.CharField(max_length=30, blank=True, null=True, verbose_name="RG")
 	data_nascimento = models.DateField(verbose_name="Data de Nascimento")
 	email = models.EmailField(max_length=50, verbose_name="E-mail")
+	
+	interesse_educador = models.BooleanField(default=False, verbose_name="Tem interesse em ser educador no espaço")
+	possivel_parceiro_pf = models.BooleanField(default=False, verbose_name="Possível parceiro Pessoa Física")
+	possivel_parceiro_pj = models.BooleanField(default=False, verbose_name="Possível parceiro Pessoa Jurídica")
 
-	# pacotes = models.ManyToManyField(Pacote, verbose_name="Pacotes Assinados")
+	interesses = MultiSelectField(choices=TODOS_INTERESSES, default=None, blank=True, null=True, verbose_name="Interesses")
+	habilidades = models.TextField(blank=True, verbose_name="Habilidades", null=True)
+	indicacao_servicos = models.BooleanField(default=False, verbose_name="Gostaria de receber indicações para prestação de serviços")
+
+	ocupacao_funcao = models.CharField(max_length=200, blank=True, null=True, verbose_name="Ocupação Profissional")
+	onde_trabalha = models.CharField(max_length=200, blank=True, null=True, verbose_name="Onde Trabalha")
+	para_quem_construir = models.CharField(max_length=90, choices=PARA_QUEM_CONSTRUIR, blank=True, null=True, verbose_name="Para quem costuma construir?")
+	
 	treinamentoEmEquipamentos = models.ManyToManyField(TreinamentoEmEquipamento, blank=True, verbose_name="Possui treinamento nos seguintes equipamentos")
+
+	outras_informacoes = models.TextField(blank=True, verbose_name="Outras informações relevantes", null=True)
+
 
 	endereco = models.CharField(max_length=200, blank=True, null=True, verbose_name="Endereço")
 	cidade = models.CharField(max_length=30, blank=True, null=True, verbose_name="Cidade")

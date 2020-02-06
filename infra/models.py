@@ -21,6 +21,17 @@ class Fornecedor(models.Model):
 		verbose_name = "Fornecedor"
 		verbose_name_plural = "Fornecedores"
 
+class Area(models.Model):
+	nome =  models.CharField(max_length=30, blank=True, verbose_name="Nome da Área do Espaço")
+	codigo =  models.CharField(max_length=30, blank=True, verbose_name="Código da Área")
+	
+	def __str__(self):
+		return u'%s - %s' % (self.nome, self.codigo)
+	
+	class Meta:
+		verbose_name = "Área do Espaço"
+		verbose_name_plural = "Áreas do Espaço"
+
 
 class Recurso(models.Model):
 
@@ -37,11 +48,14 @@ class Recurso(models.Model):
 	]
 
 	tipo_recurso = models.CharField(max_length=30, choices=TIPOS_RECURSOS)
+	area = models.ForeignKey(Area, models.SET_NULL, null=True)
 	nome = models.CharField(max_length=30, verbose_name="Nome do Recurso", help_text="Aqui vai um texto de ajuda mesmo.")
 	apelido = models.CharField(max_length=30, blank=True, null=True, verbose_name="O recurso tem algum apelido?")
 	descricao = models.TextField(blank=True, null=True, verbose_name="Descrição")
 	fabricante = models.CharField(max_length=30, blank=True, null=True)
 	data_aquisicao = models.DateField(blank=True, null=True, verbose_name="Data da aquisição")
+	valor_aquisicao = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, verbose_name="Valor (R$) da Aquisição")
+	valor_atual = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True, verbose_name="Valor (R$) atual do Recurso")
 	ultima_atualizacao =  models.DateField(blank=True, null=True, verbose_name="Última atualização")
 	voltagem = models.CharField(max_length=10, blank=True, null=True, choices=[('110v','110'),('220v','220')])
 	amperagem = models.IntegerField(blank=True, null=True)
@@ -55,8 +69,9 @@ class Recurso(models.Model):
 	hora_max_dia_usuario = models.IntegerField(blank=True, null=True, verbose_name="Número máximo de horas de utilização por dia por usuário")
 	hora_max_sem_usuario = models.IntegerField(blank=True, null=True, verbose_name="Número máximo de horas de utilização por semana por usuário")
 	fornecedor = models.ForeignKey(Fornecedor, models.SET_NULL, blank=True, null=True)
-	api_financeiro = models.CharField(max_length=30)
+	api_financeiro = models.CharField(max_length=30, null=True, blank=True, verbose_name="API financeiro Conta Azul")
 	observacoes = models.TextField(null=True, blank=True, verbose_name="Observações")
+	link_instrucoes = models.CharField(max_length=256, blank=True, null=True, verbose_name="Link com Instruções de uso")
 
 	def __str__(self):
 		return u'%s' % (self.nome)
@@ -77,6 +92,10 @@ class Bridge(models.Model):
 	class Meta:
 		verbose_name = "Brigde"
 		verbose_name_plural = "Brigdes"
+
+
+
+
 
 
 # class Arduino(models.Model):
